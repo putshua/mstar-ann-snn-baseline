@@ -1,0 +1,631 @@
+{
+  "environment": {
+    "torch": "2.9.0+cu130",
+    "torchvision": "0.24.0+cu130",
+    "spikingjelly": "0.0.0.0.14",
+    "numpy": "2.3.3",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "python": "3.11.14"
+  },
+  "models": {
+    "ann": {
+      "model": "ANN ResNet-18",
+      "n": 2425,
+      "correct": 2399,
+      "errors": 26,
+      "classes": [
+        "2S1",
+        "BMP2",
+        "BRDM2",
+        "BTR60",
+        "BTR70",
+        "D7",
+        "T62",
+        "T72",
+        "ZIL131",
+        "ZSU234"
+      ],
+      "summary": {
+        "accuracy": 0.9892783505154639,
+        "top3_accuracy": 0.9995876288659794,
+        "balanced_accuracy": 0.9884474632076301,
+        "macro_precision": 0.9898022970580849,
+        "macro_recall": 0.9884474632076301,
+        "macro_f1": 0.9890437571420515,
+        "weighted_f1": 0.9892915218748124,
+        "roc_auc_macro_ovr": 0.9999614081631634,
+        "roc_auc_micro_ovr": 0.9999488149643957,
+        "map_macro": 0.9996575550071682,
+        "ap_micro": 0.999558223983531,
+        "cohen_kappa": 0.9880523785241456,
+        "mcc": 0.9880690515573193,
+        "log_loss": 0.029046799821976176,
+        "brier_multiclass": 0.01497963961336507,
+        "ece_15_bins": 0.0034792391468114105
+      },
+      "per_class": [
+        {
+          "class": "2S1",
+          "support": 274,
+          "precision": 0.996309963099631,
+          "recall": 0.9854014598540146,
+          "f1": 0.9908256880733946,
+          "specificity": 0.99953509995351,
+          "roc_auc_ovr": 0.9999830328450185,
+          "ap_ovr": 0.9998656081735109
+        },
+        {
+          "class": "BMP2",
+          "support": 195,
+          "precision": 1.0,
+          "recall": 0.9794871794871794,
+          "f1": 0.9896373056994818,
+          "specificity": 1.0,
+          "roc_auc_ovr": 0.9999931010693343,
+          "ap_ovr": 0.9999216385159376
+        },
+        {
+          "class": "BRDM2",
+          "support": 274,
+          "precision": 1.0,
+          "recall": 0.9927007299270073,
+          "f1": 0.9963369963369964,
+          "specificity": 1.0,
+          "roc_auc_ovr": 1.0,
+          "ap_ovr": 1.0
+        },
+        {
+          "class": "BTR60",
+          "support": 195,
+          "precision": 1.0,
+          "recall": 0.9641025641025641,
+          "f1": 0.9817232375979112,
+          "specificity": 1.0,
+          "roc_auc_ovr": 0.9999563067724503,
+          "ap_ovr": 0.9995159303305394
+        },
+        {
+          "class": "BTR70",
+          "support": 196,
+          "precision": 0.9949238578680203,
+          "recall": 1.0,
+          "f1": 0.9974554707379135,
+          "specificity": 0.9995513683266039,
+          "roc_auc_ovr": 1.0,
+          "ap_ovr": 1.0
+        },
+        {
+          "class": "D7",
+          "support": 274,
+          "precision": 0.9963369963369964,
+          "recall": 0.9927007299270073,
+          "f1": 0.9945155393053017,
+          "specificity": 0.99953509995351,
+          "roc_auc_ovr": 0.9999541886815502,
+          "ap_ovr": 0.9996659634232138
+        },
+        {
+          "class": "T62",
+          "support": 273,
+          "precision": 0.9890909090909091,
+          "recall": 0.9963369963369964,
+          "f1": 0.9927007299270073,
+          "specificity": 0.9986059479553904,
+          "roc_auc_ovr": 0.9999540422402876,
+          "ap_ovr": 0.9996301563738084
+        },
+        {
+          "class": "T72",
+          "support": 196,
+          "precision": 0.9747474747474747,
+          "recall": 0.9846938775510204,
+          "f1": 0.9796954314720813,
+          "specificity": 0.9977568416330193,
+          "roc_auc_ovr": 0.9998718195218869,
+          "ap_ovr": 0.9987284322873804
+        },
+        {
+          "class": "ZIL131",
+          "support": 274,
+          "precision": 0.9646643109540636,
+          "recall": 0.9963503649635036,
+          "f1": 0.9802513464991023,
+          "specificity": 0.9953509995351,
+          "roc_auc_ovr": 0.9999643689745391,
+          "ap_ovr": 0.9997271864059198
+        },
+        {
+          "class": "ZSU234",
+          "support": 274,
+          "precision": 0.9819494584837545,
+          "recall": 0.9927007299270073,
+          "f1": 0.9872958257713249,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9999372215265688,
+          "ap_ovr": 0.999520634561372
+        }
+      ],
+      "confusion_matrix": [
+        [
+          270,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          3,
+          0
+        ],
+        [
+          1,
+          191,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          272,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          188,
+          0,
+          0,
+          0,
+          2,
+          2,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          196,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          272,
+          1,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          272,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          193,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          273,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          272
+        ]
+      ],
+      "largest_confusions": [
+        {
+          "true": "2S1",
+          "predicted": "ZIL131",
+          "count": 3
+        },
+        {
+          "true": "BMP2",
+          "predicted": "T72",
+          "count": 3
+        },
+        {
+          "true": "BTR60",
+          "predicted": "ZSU234",
+          "count": 3
+        },
+        {
+          "true": "BRDM2",
+          "predicted": "ZIL131",
+          "count": 2
+        },
+        {
+          "true": "BTR60",
+          "predicted": "T72",
+          "count": 2
+        }
+      ],
+      "matches_published_confusion_matrix": true,
+      "provenance": {
+        "checkpoint": "checkpoints/ann_resnet18.pt",
+        "checkpoint_sha256": "f52beccf94b61dc4205b6bc1d7e8c9f71b30395df8b0aaeae3a2393bfe5cd607",
+        "epoch": 100,
+        "dataset_source": {
+          "repository": "omae11/MSTAR-dataset",
+          "revision": "d99007290d20ce52933c8bf0f8c3f461acd522ee",
+          "verified_at": "2026-11-09",
+          "source": "https://github.com/omae11/MSTAR-dataset",
+          "original_data_root": "/mnt/data/butong/mstar/data/MSTAR"
+        },
+        "test_fingerprint_sha256": "1df55c425ef10077389fa40a184453190aa62c33601d2d735529f7aa29540495",
+        "mean": 0.03035951371900553,
+        "std": 0.039027507911339444,
+        "device": "cuda",
+        "evaluation_host": "dsw-925930-7d547f6848-km5t6",
+        "gpu": "NVIDIA L20Z",
+        "inference_dtype": "float32; softmax computed in float64",
+        "batch_size": 64,
+        "inference_seconds": 1.1827543769031763
+      }
+    },
+    "snn": {
+      "model": "SNN ResNet-18 (LIF, T=4)",
+      "n": 2425,
+      "correct": 2362,
+      "errors": 63,
+      "classes": [
+        "2S1",
+        "BMP2",
+        "BRDM2",
+        "BTR60",
+        "BTR70",
+        "D7",
+        "T62",
+        "T72",
+        "ZIL131",
+        "ZSU234"
+      ],
+      "summary": {
+        "accuracy": 0.9740206185567011,
+        "top3_accuracy": 0.9983505154639175,
+        "balanced_accuracy": 0.9740353390092702,
+        "macro_precision": 0.9740676112550718,
+        "macro_recall": 0.9740353390092702,
+        "macro_f1": 0.973754806687193,
+        "weighted_f1": 0.9739984929601627,
+        "roc_auc_macro_ovr": 0.9997054540936816,
+        "roc_auc_micro_ovr": 0.9996569336687097,
+        "map_macro": 0.9976194570459708,
+        "ap_micro": 0.9972122943589827,
+        "cohen_kappa": 0.971055078618783,
+        "mcc": 0.9711189229447811,
+        "log_loss": 0.0744858775094335,
+        "brier_multiclass": 0.03889367172868673,
+        "ece_15_bins": 0.00919792681505012
+      },
+      "per_class": [
+        {
+          "class": "2S1",
+          "support": 274,
+          "precision": 0.9885057471264368,
+          "recall": 0.9416058394160584,
+          "f1": 0.9644859813084112,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9995435835310006,
+          "ap_ovr": 0.9969456173443134
+        },
+        {
+          "class": "BMP2",
+          "support": 195,
+          "precision": 0.9788359788359788,
+          "recall": 0.9487179487179487,
+          "f1": 0.9635416666666666,
+          "specificity": 0.9982062780269059,
+          "roc_auc_ovr": 0.9995262734276187,
+          "ap_ovr": 0.9952212097982281
+        },
+        {
+          "class": "BRDM2",
+          "support": 274,
+          "precision": 1.0,
+          "recall": 0.9781021897810219,
+          "f1": 0.988929889298893,
+          "specificity": 1.0,
+          "roc_auc_ovr": 0.9998863200616247,
+          "ap_ovr": 0.999172170376525
+        },
+        {
+          "class": "BTR60",
+          "support": 195,
+          "precision": 0.9894179894179894,
+          "recall": 0.958974358974359,
+          "f1": 0.9739583333333334,
+          "specificity": 0.9991031390134529,
+          "roc_auc_ovr": 0.9998229274462458,
+          "ap_ovr": 0.9977959475685308
+        },
+        {
+          "class": "BTR70",
+          "support": 196,
+          "precision": 0.9798994974874372,
+          "recall": 0.9948979591836735,
+          "f1": 0.9873417721518988,
+          "specificity": 0.9982054733064154,
+          "roc_auc_ovr": 0.9999633770062534,
+          "ap_ovr": 0.9995885275487173
+        },
+        {
+          "class": "D7",
+          "support": 274,
+          "precision": 0.9927272727272727,
+          "recall": 0.9963503649635036,
+          "f1": 0.994535519125683,
+          "specificity": 0.99907019990702,
+          "roc_auc_ovr": 0.9999830328450187,
+          "ap_ovr": 0.9998661971160434
+        },
+        {
+          "class": "T62",
+          "support": 273,
+          "precision": 0.9662921348314607,
+          "recall": 0.945054945054945,
+          "f1": 0.9555555555555556,
+          "specificity": 0.995817843866171,
+          "roc_auc_ovr": 0.9990859512234976,
+          "ap_ovr": 0.9927671984631108
+        },
+        {
+          "class": "T72",
+          "support": 196,
+          "precision": 0.9330143540669856,
+          "recall": 0.9948979591836735,
+          "f1": 0.9629629629629629,
+          "specificity": 0.993719156572454,
+          "roc_auc_ovr": 0.9997894177859569,
+          "ap_ovr": 0.9980110185525796
+        },
+        {
+          "class": "ZIL131",
+          "support": 274,
+          "precision": 0.9543859649122807,
+          "recall": 0.9927007299270073,
+          "f1": 0.9731663685152058,
+          "specificity": 0.9939562993956299,
+          "roc_auc_ovr": 0.9998405087431749,
+          "ap_ovr": 0.9987929533814868
+        },
+        {
+          "class": "ZSU234",
+          "support": 274,
+          "precision": 0.9575971731448764,
+          "recall": 0.9890510948905109,
+          "f1": 0.9730700179533214,
+          "specificity": 0.9944211994421199,
+          "roc_auc_ovr": 0.9996131488664244,
+          "ap_ovr": 0.9980337303101718
+        }
+      ],
+      "confusion_matrix": [
+        [
+          258,
+          1,
+          0,
+          0,
+          2,
+          0,
+          7,
+          0,
+          6,
+          0
+        ],
+        [
+          2,
+          185,
+          0,
+          0,
+          0,
+          0,
+          0,
+          8,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          268,
+          2,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          187,
+          2,
+          1,
+          2,
+          3,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          195,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          273,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          258,
+          3,
+          2,
+          9
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          195,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          272,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          271
+        ]
+      ],
+      "largest_confusions": [
+        {
+          "true": "T62",
+          "predicted": "ZSU234",
+          "count": 9
+        },
+        {
+          "true": "BMP2",
+          "predicted": "T72",
+          "count": 8
+        },
+        {
+          "true": "2S1",
+          "predicted": "T62",
+          "count": 7
+        },
+        {
+          "true": "2S1",
+          "predicted": "ZIL131",
+          "count": 6
+        },
+        {
+          "true": "BTR60",
+          "predicted": "T72",
+          "count": 3
+        }
+      ],
+      "matches_published_confusion_matrix": true,
+      "provenance": {
+        "checkpoint": "checkpoints/snn_resnet18_lif_t4.pt",
+        "checkpoint_sha256": "306119d39cfc6729c81cb751360031faea34751bb9473d538e2b8074de6b7d9a",
+        "epoch": 100,
+        "dataset_source": {
+          "repository": "omae11/MSTAR-dataset",
+          "revision": "d99007290d20ce52933c8bf0f8c3f461acd522ee",
+          "verified_at": "2026-11-09",
+          "source": "https://github.com/omae11/MSTAR-dataset",
+          "original_data_root": "/mnt/data/butong/mstar/data/MSTAR"
+        },
+        "test_fingerprint_sha256": "1df55c425ef10077389fa40a184453190aa62c33601d2d735529f7aa29540495",
+        "mean": 0.03035951371900553,
+        "std": 0.039027507911339444,
+        "device": "cuda",
+        "evaluation_host": "dsw-925930-7d547f6848-km5t6",
+        "gpu": "NVIDIA L20Z",
+        "inference_dtype": "float32; softmax computed in float64",
+        "batch_size": 64,
+        "inference_seconds": 1.951643621083349
+      }
+    }
+  }
+}
