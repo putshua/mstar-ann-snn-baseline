@@ -28,8 +28,8 @@
     "latency_inputs": "Fixed seed-0 class-interleaved test subset, preloaded on GPU; models run in shuffled order for each image.",
     "backends": {
       "ann": "torch",
-      "snn": "SpikingJelly torch",
-      "SEW": "SpikingJelly CuPy"
+      "snn": "SpikingJelly eval TorchScript",
+      "SEW": "SpikingJelly eval TorchScript; CuPy configured for training"
     },
     "cuda_event_timing": "GPU timeline interval for the same forward and reset; may include gaps between kernel launches."
   },

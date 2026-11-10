@@ -221,7 +221,9 @@ def main():
               'timing':'Synchronized wall-clock model forward, time readout and neuron reset; excludes image IO, preprocessing and host-to-device transfer.',
               'cuda_event_timing':'GPU timeline interval for the same forward and reset; may include gaps between kernel launches.',
               'latency_inputs':'Fixed seed-0 class-interleaved test subset, preloaded on GPU; models run in shuffled order for each image.',
-              'backends':{'ann':'torch','snn':'SpikingJelly torch','SEW':'SpikingJelly CuPy'}}
+              'backends':{'ann':'torch',
+                          'snn':'SpikingJelly eval TorchScript',
+                          'SEW':'SpikingJelly eval TorchScript; CuPy configured for training'}}
     results=(json.loads((args.output/'metrics.json').read_text())['models']
              if args.latency_only else {})
     scores={}
