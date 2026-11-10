@@ -1,0 +1,27 @@
+import torch.nn as nn
+import numpy as np
+from spikingjelly.activation_based import surrogate, neuron
+
+# SpikingJelly 0.0.0.0.14's CuPy type check still references this removed alias.
+# Restore its historical meaning within this process for NumPy >= 1.24.
+if 'int' not in np.__dict__:
+    np.int = int
+
+
+def create_mslif(v_threshold=1., v_reset=0., tau=2., surrogate_function=surrogate.ATan(),
+                 detach_reset=True):
+    return neuron.LIFNode(v_threshold=v_threshold, v_reset=v_reset, tau=tau,
+                          surrogate_function=surrogate_function, detach_reset=detach_reset,
+                          step_mode='m', backend='cupy')
+
+
+def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1, bias=False):
+    """3x3 convolution with padding"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=dilation,
+                     dilation=dilation, bias=bias, groups=groups)
+
+
+def conv1x1(in_planes, out_planes, stride=1, bias=False):
+    """1x1 convolution"""
+    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, bias=bias)
+

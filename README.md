@@ -1,156 +1,56 @@
-# MSTAR ANN / SNN ResNet-18
+# MSTAR ANN / SNN / SEW-ResNet-18
 
-MSTAR 十类 SOC：17° 训练 2747 张，15° 测试 2425 张。
-输入为单通道 128×128 中心裁剪；seed=0，随机初始化，100 epochs。
+MSTAR 十类 SOC：17° 训练 2747 张，15° 测试 2425 张；单通道 128×128，seed=0，SNN 为 T=4。全部分类指标使用最终权重、FP32 和完整测试集。
 
-| 模型 | Accuracy | Macro-F1 | 错误数 |
-| --- | ---: | ---: | ---: |
-| ANN ResNet-18 | 98.9278% | 98.9044% | 26 / 2425 |
-| SNN ResNet-18，LIF，T=4 | 97.4021% | 97.3755% | 63 / 2425 |
+## 结果
 
-两者均为 11,175,370 个可训练参数。SNN 含 17 个 LIF 层，128×128 输入下共 753,664 个 LIF 单元；tau=2，threshold=1，ATan 代理梯度。同一静态图输入 4 步，对 logits 取时间平均，每个 batch 重置膜电位。
+延迟单位为 **ms/图，batch size=1**，在本机单张 NVIDIA L20Z 上测得。
 
-训练配方：AdamW，lr=0.001，weight_decay=0.0001，batch=64，cosine 调度，AMP，反射填充后的轻微平移增强；固定使用最后一轮评估测试集。单张 NVIDIA L20Z 上运行，PyTorch 2.9.0+cu130 / torchvision 0.24.0+cu130 / SpikingJelly 0.0.0.0.14。
+| 模型 | Accuracy | Macro-F1 | LIF 保留率 | 平均延迟 | P50 | P95 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ANN ResNet-18 | 98.9278% | 98.9044% | — | 1.9864 | 1.4587 | 4.5600 |
+| SNN ResNet-18，post-add LIF | 97.4021% | 97.3755% | 100.0000% | 7.0699 | 5.1375 | 16.0199 |
+| SEW-ResNet-18，本机重训 | 97.9794% | 97.9282% | 100.0000% | 7.7866 | 5.6525 | 17.7157 |
+| SEW 剪枝 λ=1e-5，本机重训 | 95.8763% | 95.7298% | 1.4759% | 8.7897 | 6.3727 | 20.1023 |
+| SEW-ResNet-18，上传权重 | 98.1856% | 98.0824% | 100.0000% | 7.7576 | 5.6412 | 17.5276 |
+| SEW 剪枝 λ=5e-6，上传权重 | 96.1649% | 96.0894% | 2.7434% | 8.7889 | 6.3660 | 20.0163 |
+| SEW 剪枝 λ=1e-5，上传权重 | 95.2165% | 95.1890% | 1.5431% | 8.7903 | 6.3683 | 19.8949 |
+| SEW 剪枝 λ=2e-5，上传权重 | 89.5670% | 89.4382% | 0.8134% | 8.7827 | 6.3669 | 19.9368 |
 
-## 文件
+计时使用 FP32 eager 模式、单 CPU 线程并固定 CPU 核；每个模型预热 100 次，在相同的 256 张分层测试图片上重复 5 轮，每张图的模型执行顺序打乱并交错运行。每次 CUDA 同步，计入完整前向、SNN 的四步编码与时间读出、状态重置；不计读图、预处理和 CPU→GPU 传输。均值/P50/P95 包含共享宿主的调度波动，不是 batch=64 吞吐量折算。CUDA Event 时间和每轮均值另存于 JSON/CSV。
 
-- `train.py`、`snn.py`、`mstar_data.py`、`evaluate.py`：训练、模型、预处理及评估代码。
-- `checkpoints/ann_resnet18.pt`、`checkpoints/snn_resnet18_lif_t4.pt`：两份训练权重。
-- `results/ann.json`、`results/snn.json`：实验配置、测试指标及混淆矩阵。
+ANN / post-add SNN 为 11,175,370 个参数；SEW 为 11,221,540 个网络参数，差异来自 512→100→10 的 boost 分类头。post-add SNN 有 17 个 LIF 模块、753,664 个空间单元；SEW 有 20 个模块、811,008 个空间单元。剪枝版额外包含 811,008 个掩码参数。
 
-## 运行
+掩码剪枝关闭空间神经元输出，卷积张量尺寸保持不变，保留率不代表参数压缩率或实测加速比。SEW 训练 100 epochs；剪枝从头训练掩码 100 epochs，再固定二值掩码微调 20 epochs。原 post-add SNN 使用 SpikingJelly torch 后端，SEW 使用 CuPy 后端，延迟比较包含各自实现差异。
 
-安装与本机 CUDA 匹配的 PyTorch，再安装依赖：
+## 完整指标
 
-```bash
-pip install -r requirements.txt
-```
+- [完整 JSON](results/analysis/metrics.json)：分类指标、混淆矩阵、参数/神经元数量、SOP 估计、BS=1 延迟统计、训练配置和预处理。
+- [汇总 CSV](results/analysis/summary.csv)；[逐类别 CSV](results/analysis/per_class.csv)。
+- [混淆矩阵](results/analysis/confusion_matrices.png)、[ROC 曲线](results/analysis/roc_curves.png)、[PR 曲线](results/analysis/precision_recall_curves.png)；目录中同时提供 SVG。
 
-使用 [MSTAR SOC 镜像](https://github.com/omae11/MSTAR-dataset) 的 `soc/` 目录，结构为 `soc/{train,test}/{class}/*.jpg`。本次使用版本 `d99007290d20ce52933c8bf0f8c3f461acd522ee`。
+指标包括 Accuracy、Top-3/Top-5、Balanced accuracy、Macro precision/recall/F1、Weighted F1、ROC-AUC macro/micro、mAP/AP、κ、MCC、Log loss、Brier 和 ECE；逐类包含 Precision、Recall、F1、Specificity、ROC-AUC 与 AP。ROC/AP 按 one-vs-rest 计算，mAP 为分类 AP 的类别均值；ECE 使用 15 个等宽置信度分箱，Brier 对十类求和后对样本取均值。SOP 仅统计脉冲驱动卷积，不含静态 stem 和 fc，也不是实测能耗。
 
-```bash
-# ANN
-CUDA_VISIBLE_DEVICES=0 python train.py --data /path/to/soc \
-  --arch resnet18 --seed 0 --output outputs/ann
+## 复现
 
-# SNN：LIF，4 个时间步
-CUDA_VISIBLE_DEVICES=0 python train.py --data /path/to/soc \
-  --arch spiking_resnet18 --time-steps 4 --lif-tau 2 \
-  --seed 0 --output outputs/snn
-
-# 加载权重评估；ANN 同理，更换 checkpoint 路径即可
-CUDA_VISIBLE_DEVICES=0 python evaluate.py \
-  --checkpoint checkpoints/snn_resnet18_lif_t4.pt \
-  --data /path/to/soc/test --output outputs/snn_eval
-```
-
-输出目录须不存在。`SOC` 的逐类样本数对应 [ASIR-Net 论文表 2](https://doi.org/10.3390/rs13153029)；本项目使用 JPEG 镜像及自己的预处理，不声称逐文件复现该论文。
-
-<!-- BEGIN GENERATED METRICS -->
-## 完整测试指标
-
-使用已发布的第 100 epoch 权重，重新推理全部 **2425 张 SOC 测试图片**。灰度、128×128 中心裁剪、训练集均值/标准差与原实验一致；无测试增强，不重新训练或选择权重。两组预测的混淆矩阵均与原实验逐项一致。
-
-本次评估通过 keeper 在单张 **NVIDIA L20Z** 上运行；节点和软件版本记录于 [metrics.json](results/analysis/metrics.json)。
-
-| 指标 | ANN ResNet-18 | SNN ResNet-18，LIF T=4 |
-| --- | ---: | ---: |
-| Accuracy ↑ | 98.9278% | 97.4021% |
-| Top-3 accuracy ↑ | 99.9588% | 99.8351% |
-| Balanced accuracy / Macro recall ↑ | 98.8447% | 97.4035% |
-| Macro precision ↑ | 98.9802% | 97.4068% |
-| Macro F1 ↑ | 98.9044% | 97.3755% |
-| Weighted F1 ↑ | 98.9292% | 97.3998% |
-| ROC-AUC macro (OvR) ↑ | 0.999961 | 0.999705 |
-| ROC-AUC micro (OvR) ↑ | 0.999949 | 0.999657 |
-| mAP / Macro AP (OvR) ↑ | 0.999658 | 0.997619 |
-| Micro AP (OvR) ↑ | 0.999558 | 0.997212 |
-| Cohen's κ ↑ | 0.988052 | 0.971055 |
-| MCC ↑ | 0.988069 | 0.971119 |
-| Log loss ↓ | 0.029047 | 0.074486 |
-| Multiclass Brier score ↓ | 0.014980 | 0.038894 |
-| ECE (15 bins) ↓ | 0.3479% | 0.9198% |
-| 错误数 | 26 / 2425 | 63 / 2425 |
-
-### 指标口径
-
-- 每张图片的十类分数为 FP32 推理 logits 的 float64 softmax。SNN 先对 4 个时间步的 logits 求均值，再做 softmax；每个 batch 重置膜电位。
-- ROC 与 PR 使用 **one-vs-rest (OvR)**：每类分别作为正类，其余九类作为负类，遍历连续分数阈值。macro AUC 为十个类别 AUC 的算术平均；micro 将 2425×10 个标签/分数展开计算。
-- **mAP 是图像分类的 macro AP**：按 [`average_precision_score`](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html) 计算各类 AP，再等权平均。AP = Σₙ (Rₙ − Rₙ₋₁) Pₙ，使用召回增量加权，未采用梯形积分。此处不涉及目标检测的 IoU、mAP@0.5 或 mAP@0.5:0.95。
-- Macro 对十类等权；Weighted F1 按各类测试样本数加权。单标签十分类中 micro precision、micro recall、micro F1 均等于 accuracy。
-- Specificity = TN/(TN+FP)，按 OvR 定义；κ 与 MCC 衡量离散预测的一致性。Log loss 使用自然对数。Brier = meanᵢ Σ꜀ (pᵢ꜀−yᵢ꜀)²，范围 [0, 2]，不除以类别数或 2。
-- ECE 使用 top-1 置信度的 15 个等宽分箱，对各箱 |准确率−平均置信度| 按样本比例加权。所有概率均未做温度缩放或测试集校准。
-- 本表来自单次 seed=0 实验，未估计多次训练的方差。
-
-### 混淆矩阵
-
-纵轴为真实类别，横轴为预测类别；上排为计数，下排按真实类别归一化，每行和为 1。
-
-![ANN 与 SNN 的混淆矩阵](results/analysis/confusion_matrices.png)
-
-### ROC 曲线
-
-每种模型给出十类 OvR ROC 与 micro ROC；下排放大 FPR ≤ 0.03、TPR ≥ 0.90 区域。图例括号内为 AUC。
-
-![ANN 与 SNN 的 ROC 曲线](results/analysis/roc_curves.png)
-
-### Precision–Recall 曲线
-
-图例括号内为 AP；mAP 是十类 AP 的平均值。下排放大 Recall ≥ 0.90、Precision ≥ 0.90 区域。
-
-![ANN 与 SNN 的 PR 曲线](results/analysis/precision_recall_curves.png)
-
-### 各类别指标
-
-Precision、Recall、F1、Specificity 均以百分比展示；AUC 和 AP 范围为 [0, 1]。
-
-#### ANN ResNet-18
-
-| 类别 | 测试数 | Precision | Recall | F1 | Specificity | ROC-AUC | AP |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 2S1 | 274 | 99.6310% | 98.5401% | 99.0826% | 99.9535% | 0.999983 | 0.999866 |
-| BMP2 | 195 | 100.0000% | 97.9487% | 98.9637% | 100.0000% | 0.999993 | 0.999922 |
-| BRDM2 | 274 | 100.0000% | 99.2701% | 99.6337% | 100.0000% | 1.000000 | 1.000000 |
-| BTR60 | 195 | 100.0000% | 96.4103% | 98.1723% | 100.0000% | 0.999956 | 0.999516 |
-| BTR70 | 196 | 99.4924% | 100.0000% | 99.7455% | 99.9551% | 1.000000 | 1.000000 |
-| D7 | 274 | 99.6337% | 99.2701% | 99.4516% | 99.9535% | 0.999954 | 0.999666 |
-| T62 | 273 | 98.9091% | 99.6337% | 99.2701% | 99.8606% | 0.999954 | 0.999630 |
-| T72 | 196 | 97.4747% | 98.4694% | 97.9695% | 99.7757% | 0.999872 | 0.998728 |
-| ZIL131 | 274 | 96.4664% | 99.6350% | 98.0251% | 99.5351% | 0.999964 | 0.999727 |
-| ZSU234 | 274 | 98.1949% | 99.2701% | 98.7296% | 99.7675% | 0.999937 | 0.999521 |
-
-主要混淆（真实 → 预测）：2S1 → ZIL131：3 张；BMP2 → T72：3 张；BTR60 → ZSU234：3 张；BRDM2 → ZIL131：2 张；BTR60 → T72：2 张。
-
-#### SNN ResNet-18 (LIF, T=4)
-
-| 类别 | 测试数 | Precision | Recall | F1 | Specificity | ROC-AUC | AP |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 2S1 | 274 | 98.8506% | 94.1606% | 96.4486% | 99.8605% | 0.999544 | 0.996946 |
-| BMP2 | 195 | 97.8836% | 94.8718% | 96.3542% | 99.8206% | 0.999526 | 0.995221 |
-| BRDM2 | 274 | 100.0000% | 97.8102% | 98.8930% | 100.0000% | 0.999886 | 0.999172 |
-| BTR60 | 195 | 98.9418% | 95.8974% | 97.3958% | 99.9103% | 0.999823 | 0.997796 |
-| BTR70 | 196 | 97.9899% | 99.4898% | 98.7342% | 99.8205% | 0.999963 | 0.999589 |
-| D7 | 274 | 99.2727% | 99.6350% | 99.4536% | 99.9070% | 0.999983 | 0.999866 |
-| T62 | 273 | 96.6292% | 94.5055% | 95.5556% | 99.5818% | 0.999086 | 0.992767 |
-| T72 | 196 | 93.3014% | 99.4898% | 96.2963% | 99.3719% | 0.999789 | 0.998011 |
-| ZIL131 | 274 | 95.4386% | 99.2701% | 97.3166% | 99.3956% | 0.999841 | 0.998793 |
-| ZSU234 | 274 | 95.7597% | 98.9051% | 97.3070% | 99.4421% | 0.999613 | 0.998034 |
-
-主要混淆（真实 → 预测）：T62 → ZSU234：9 张；BMP2 → T72：8 张；2S1 → T62：7 张；2S1 → ZIL131：6 张；BTR60 → T72：3 张。
-
-ANN 的 accuracy 比 SNN 高 **1.5258 个百分点**，少错 37 张。ROC-AUC、AP 衡量类别分数的排序能力，argmax 后的准确率和 F1 衡量最终分类结果，需结合阅读。
-
-### 数据与复现
-
-- [完整指标与溯源信息](results/analysis/metrics.json)；[逐类别 CSV](results/analysis/per_class.csv)。
-- 原始预测分数：[ANN](results/analysis/ann_scores.npz)、[SNN](results/analysis/snn_scores.npz)。包含相对图片路径、真实标签、类别顺序、logits、softmax 概率和权重 SHA-256；使用 `numpy.load(..., allow_pickle=False)` 读取。
-- 矢量图：[混淆矩阵](results/analysis/confusion_matrices.svg)、[ROC](results/analysis/roc_curves.svg)、[PR](results/analysis/precision_recall_curves.svg)。
+数据使用 [MSTAR SOC 镜像](https://github.com/omae11/MSTAR-dataset)，固定版本 `d99007290d20ce52933c8bf0f8c3f461acd522ee`，结构为 `soc/{train,test}/{class}/*.jpg`。这是 JPEG 镜像上的实验；SOC 逐类数量对应 [ASIR-Net 表 2](https://doi.org/10.3390/rs13153029)。
 
 ```bash
-pip install -r requirements-analysis.txt
-python analyze.py --data /path/to/soc/test --device auto
+pip install -r requirements-analysis.txt -r pruning/requirements.txt
 
-# 直接使用已发布的分数重新生成指标和图表，无需推理
-python analyze.py --reuse-scores
+# ANN / post-add LIF SNN 训练
+CUDA_VISIBLE_DEVICES=0 python train.py --data /path/to/soc --arch resnet18 --seed 0 --output outputs/ann
+CUDA_VISIBLE_DEVICES=0 python train.py --data /path/to/soc --arch spiking_resnet18 --time-steps 4 --seed 0 --output outputs/snn
+
+# 完整指标与 BS=1 计时；37 为本机使用的 CPU 核，可按机器调整
+CUDA_VISIBLE_DEVICES=0 python benchmark.py --data /path/to/soc/test --cpu-core 37 \
+  --uploaded-dir /path/to/uploaded_checkpoints
+
+# 仅更新 BS=1 计时，保留已有分类指标
+CUDA_VISIBLE_DEVICES=0 python benchmark.py --data /path/to/soc/test --cpu-core 37 \
+  --uploaded-dir /path/to/uploaded_checkpoints --latency-only
 ```
-<!-- END GENERATED METRICS -->
+
+`benchmark.py` 默认加载 `checkpoints/` 中四组本机权重；`--uploaded-dir` 可选，用于额外加载 `sew_resnet18_mstar_{dense,5e-6,1e-5,2e-5}/checkpoint_final.pth`。本次新增 SEW checkpoint 暂不提交远端，后续单独打 zip；旧 ANN / post-add SNN 权重仍在 `checkpoints/`。
+
+SEW 的训练、剪枝及独立评估命令见 [pruning/README.md](pruning/README.md)。代码来自 [xyshi2000/MSTAR-SNN](https://github.com/xyshi2000/MSTAR-SNN/tree/c3e696a48ccc2bcf0896efa546de0c0a2dbfc05a)，保留其模型和剪枝配方。SEW 与旧 ANN/post-add SNN 的 bias/norm 衰减、cosine 最低学习率和 `drop_last` 设置有差异。

@@ -1,0 +1,5 @@
+-r ../requirements.txt
+PyYAML>=6
+matplotlib>=3.7
+tensorboard>=2.14
+cupy-cuda13x==14.2.0
