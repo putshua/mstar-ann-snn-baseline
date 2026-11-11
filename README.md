@@ -1,6 +1,38 @@
 # MSTAR ANN / SEW 推理基线
 
-MSTAR 十类 SOC：17° 训练 2747 张、15° 测试 2425 张；单通道 128×128，FP32、BS=1、SNN T=4。仅保留 ANN 和上传的未剪枝 SEW、λ=5e-6 / 1e-5 / 2e-5 权重的结果。
+MSTAR 十类 SOC：17° 训练 2747 张、15° 测试 2425 张；单通道 128×128，FP32、BS=1、SNN T=4。保留 ResNet-18 既有对照，并新增本机 ResNet-34 的神经元/性能结果。
+
+## ResNet-34：神经元与性能
+
+本机 GPU 3（L20Z）从头训练，SOC、seed=0。ANN 训练 100 epochs；SEW 训练掩码 100 epochs，再固定二值掩码微调 20 epochs，T=4。分类和计时均使用最终权重、FP32、BS=1；CUDA Event 计时 5 个 run，时间为 avg ± std（ms/图）。
+
+| 模型 | 神经元/激活总数 | 保留数 | 保留率 | Accuracy | Macro-F1 | 推理时间 avg ± std |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| ANN ResNet-34 | 1,163,264 | 1,163,264 | 100.0000% | 98.9278% | 98.8939% | 4.8804 ± 1.5444 |
+| SEW-ResNet-34，λ=2e-5 | 1,220,608 | 5,977 | 0.4897% | 85.8969% | 85.3944% | 11.2500 ± 0.3842 |
+| SEW-ResNet-34，λ=1e-5 | 1,220,608 | 12,078 | 0.9895% | 94.5567% | 94.5637% | 16.1066 ± 6.4382 |
+
+λ=1e-5 保留 12,078 / 1,220,608 个 LIF 单元，即 **0.9895%**，满足约 1% 的目标。ANN 统计 ReLU 空间激活位置，SEW 统计 LIF 空间单元，均不乘 batch 或 T。ANN 有 33 个激活位置，SEW 有 36 个 LIF 模块（包括下采样支路）。
+
+ANN 网络参数 21,283,530；SEW 网络参数 21,329,700，另有 1,220,608 个 mask 参数。此处是原始 masked 推理，卷积张量尺寸未缩小，未对 ResNet-34 追加融合/稀疏性能实验。两组 SNN 的计时波动不同，保留原始五次均值及 std，不据此判断两个 λ 的速度优劣。
+
+```bash
+CUDA_VISIBLE_DEVICES=3 python train.py --data /path/to/soc --arch resnet34 \
+  --epochs 100 --seed 0 --output outputs/ann34
+
+CUDA_VISIBLE_DEVICES=3 python pruning/main.py \
+  --config pruning/configs/image_classification/sew_resnet18_mstar_prune.yaml \
+  --model sew_resnet34 --penalty-lmbda 1e-5 --seed 0 \
+  --data-path /path/to/soc --output-dir outputs/sew34 --skip-mask-plots --no-save-latest
+
+# 单个新 checkpoint：评估一次指标，计时 5 次
+CUDA_VISIBLE_DEVICES=3 python benchmark_inference.py --data /path/to/soc/test \
+  --sew-checkpoint /path/to/sew_resnet34.pt --output outputs/sew34_eval --evaluate
+```
+
+ANN 和 SEW 可分别用 `--ann-checkpoint` / `--sew-checkpoint`，或同时提供以比较一对权重。两者均支持 ResNet-18/34。新增权重仍留本机，不提交远端。
+
+## ResNet-18 既有结果
 
 | 模型 / 版本 | Accuracy | Macro-F1 | 推理图参数元素 | 推理时间 avg ± std（ms/图） |
 | --- | ---: | ---: | ---: | ---: |
