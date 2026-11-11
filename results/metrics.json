@@ -261,7 +261,8 @@
           1.50996351015625
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.05820006722344639
       }
     },
     "ann/fold_bn": {
@@ -519,7 +520,8 @@
           1.0605106
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.0387140262044705
       }
     },
     "sew_dense/baseline": {
@@ -777,7 +779,8 @@
           5.906476721875
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.20665799810779598
       }
     },
     "sew_dense/bn_lif": {
@@ -1035,7 +1038,8 @@
           1.8983029156249998
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.07912158775238298
       }
     },
     "pruned_5e-6/baseline": {
@@ -1293,7 +1297,8 @@
           6.6606820921875
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.22333812960723984
       }
     },
     "pruned_5e-6/bn_lif": {
@@ -1551,7 +1556,8 @@
           1.8996812296874999
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.06791817075312243
       }
     },
     "pruned_5e-6/sparse": {
@@ -1809,7 +1815,8 @@
           1.667598221875
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.06494749503740829
       }
     },
     "pruned_1e-5/baseline": {
@@ -2067,7 +2074,8 @@
           6.700596553125
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.2300996199414697
       }
     },
     "pruned_1e-5/bn_lif": {
@@ -2325,7 +2333,8 @@
           1.9058029765625002
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.07394087268214115
       }
     },
     "pruned_1e-5/sparse": {
@@ -2583,7 +2592,8 @@
           1.53149523984375
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.0614461064014339
       }
     },
     "pruned_2e-5/baseline": {
@@ -2841,7 +2851,8 @@
           6.687737888281251
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.23791121587863232
       }
     },
     "pruned_2e-5/bn_lif": {
@@ -3099,7 +3110,8 @@
           1.9067854890625
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.0736013026723367
       }
     },
     "pruned_2e-5/sparse": {
@@ -3357,8 +3369,10 @@
           1.5223579101562499
         ],
         "timer": "CUDA-synchronized wall clock",
-        "iterations_per_run": 1280
+        "iterations_per_run": 1280,
+        "std_ms": 0.05455003411928737
       }
     }
-  }
+  },
+  "std_definition": "Sample standard deviation (ddof=1) across the five saved run means."
 }

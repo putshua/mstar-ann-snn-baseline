@@ -86,7 +86,7 @@ def measure(run,x,warmup,runs,iterations):
         for _ in range(iterations):run(x)
         end.record();end.synchronize()
         values.append(start.elapsed_time(end)/iterations)
-    return {'mean_ms':float(np.mean(values)),'run_mean_ms':values,
+    return {'mean_ms':float(np.mean(values)),'std_ms':float(np.std(values,ddof=1)) if len(values)>1 else 0.,'run_mean_ms':values,
             'timer':'CUDA Event','iterations_per_run':iterations}
 
 
@@ -139,10 +139,11 @@ def main():
             print(name,'accuracy',result['metrics']['accuracy'],'ms',result['inference']['mean_ms'],flush=True)
         del cases,model,original
     report={'gpu':torch.cuda.get_device_name(0),'dtype':'float32','batch_size':1,'snn_time_steps':4,
-            'test_images':len(ds),'runs':args.runs,'models':results}
+            'test_images':len(ds),'runs':args.runs,
+            'std_definition':'Sample standard deviation (ddof=1) across run means.','models':results}
     args.output.mkdir(parents=True,exist_ok=True)
     path.write_text(json.dumps(report,indent=2,ensure_ascii=False,allow_nan=False)+'\n')
-    rows=[{'model':name,**r['metrics'],'parameters':r['parameters'],'inference_time_ms':r['inference']['mean_ms']} for name,r in results.items()]
+    rows=[{'model':name,**r['metrics'],'parameters':r['parameters'],'inference_time_ms':r['inference']['mean_ms'],'inference_time_std_ms':r['inference']['std_ms']} for name,r in results.items()]
     with (args.output/'summary.csv').open('w',newline='') as f:
         w=csv.DictWriter(f,fieldnames=list(rows[0]),lineterminator='\n');w.writeheader();w.writerows(rows)
 
