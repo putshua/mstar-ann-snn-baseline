@@ -2,7 +2,34 @@
 
 MSTAR 十类 SOC：17° 训练 2747 张，15° 测试 2425 张；单通道 128×128，seed=0，SNN 为 T=4。全部分类指标使用最终权重、FP32 和完整测试集。
 
-## 结果
+## 最新：上传 SEW 的加速结果
+
+四组权重均来自上传的 `mstar_checkpoints.zip`；本节分类与计时均为 FP32、T=4、BS=1。速度以同轮对应原始图为基线。
+
+| 上传权重 | 原始 / BN融合 Accuracy | 原始 ms | BN融合 ms | BN融合加速 | 稀疏 Accuracy | 稀疏 ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 未剪枝 SEW | 98.1031% / 98.1031% | 5.7879 | 1.8394 | 3.15× | — | — |
+| SEW λ=5e-6 | 96.3299% / 96.3299% | 6.5276 | 1.8352 | 3.56× | 96.2474% | 1.5899 |
+| SEW λ=1e-5 | 95.3402% / 95.3402% | 6.5606 | 1.8363 | 3.57× | 95.1753% | 1.4501 |
+| SEW λ=2e-5 | 89.6082% / 89.6082% | 6.5294 | 1.8298 | 3.57× | 89.4845% | 1.4521 |
+
+[上传 SEW 的完整结果](results/uploaded_sew/README.md)：[JSON](results/uploaded_sew/metrics.json)、[汇总 CSV](results/uploaded_sew/summary.csv)、[逐类 CSV](results/uploaded_sew/per_class.csv)。[融合实现及全部消融](INFERENCE.md)。
+
+BN融合版在完整 2425 张测试图上保持这四组 BS=1 基线的 Accuracy。稀疏版还跳过被 mask 关闭的卷积输出，三组准确率分别下降 0.0825 / 0.1649 / 0.1237 个百分点；新增 checkpoint 仍留本机。
+
+### ANN / post-add SNN 参照（同轮计时）
+
+| 模型 | 原始均值 ms | 融合均值 ms | 加速 |
+| --- | ---: | ---: | ---: |
+| ANN ResNet-18 | 1.4615 | 1.0158 | 1.44× |
+| post-add SNN | 5.2370 | 1.8781 | 2.79× |
+
+**旧表的 ANN 1.9864 ms 是上一轮均值**，该轮 P50=1.4587 ms、P95=4.5600 ms，均值受长尾波动影响。上表为最新同轮对照，不能把两轮时间交叉计算加速比。
+
+## 历史基线
+
+<details>
+<summary>上一轮结果：分类 BS=64，延迟 BS=1</summary>
 
 延迟单位为 **ms/图，batch size=1**，在本机单张 NVIDIA L20Z 上测得。
 
@@ -23,26 +50,9 @@ ANN / post-add SNN 为 11,175,370 个参数；SEW 为 11,221,540 个网络参数
 
 原始掩码剪枝关闭空间神经元输出，卷积张量尺寸保持不变，保留率不代表参数压缩率或实测加速比。SEW 训练 100 epochs；剪枝从头训练掩码 100 epochs，再固定二值掩码微调 20 epochs。当前 SpikingJelly 版本中，两种 SNN 的 `eval()` 都走 TorchScript 逐时间步执行；SEW 的 CuPy 设置用于训练。
 
-## Triton 推理融合
+</details>
 
-本机单张 L20Z、FP32、T=4、BS=1 的新一轮测量。SNN 使用 Triton 融合 4 步 LIF、冻结 BN 仿射、mask 和残差；ANN 折叠 Conv-BN。
-
-| 模型 | 原始 ms/图 | 融合 ms/图 | 加速比 | 原始 / 融合 Accuracy |
-| --- | ---: | ---: | ---: | ---: |
-| ANN ResNet-18 | 1.4615 | 1.0158 | 1.44× | 98.9278% / 98.9278% |
-| post-add SNN | 5.2370 | 1.8781 | 2.79× | 97.1959% / 97.1959% |
-| SEW-ResNet-18 | 5.7879 | 1.8394 | 3.15× | 98.1031% / 98.1031% |
-| SEW λ=5e-6 | 6.5276 | 1.8352 | 3.56× | 96.3299% / 96.3299% |
-| SEW λ=1e-5 | 6.5606 | 1.8363 | 3.57× | 95.3402% / 95.3402% |
-| SEW λ=2e-5 | 6.5294 | 1.8298 | 3.57× | 89.6082% / 89.6082% |
-
-本节分类指标也统一使用 BS=1；前表分类使用 BS=64。SNN 阈值可能放大不同 batch 卷积的浮点舍入差异，因此融合精度应与本节对应原始版本比较。
-
-进一步把 mask 转为稀疏输出坐标，只计算活跃位置的 Conv＋BN＋LIF：`5e-6` 为 **1.5899 ms / 96.2474%**，`1e-5` 为 **1.4501 ms / 95.1753%**，`2e-5` 为 **1.4521 ms / 89.4845%**。相对各自 BS=1 原始版本，准确率分别下降 0.0825 / 0.1649 / 0.1237 个百分点。稀疏累加和卷积权重 BN 折叠会改变浮点顺序，作为独立选项报告。
-
-实现、mask 吸收边界和运行命令见 [INFERENCE.md](INFERENCE.md)；[完整融合结果](results/inference/metrics.json)、[消融汇总](results/inference/summary.csv)、[逐类指标](results/inference/per_class.csv)、[准确率–延迟图](results/inference/accuracy_latency.png)。新增权重仍留本机。
-
-## 完整指标
+## 历史基线完整指标
 
 - [完整 JSON](results/analysis/metrics.json)：分类指标、混淆矩阵、参数/神经元数量、SOP 估计、BS=1 延迟统计、训练配置和预处理。
 - [汇总 CSV](results/analysis/summary.csv)；[逐类别 CSV](results/analysis/per_class.csv)。
