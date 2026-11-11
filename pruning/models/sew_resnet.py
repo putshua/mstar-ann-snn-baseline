@@ -5,7 +5,7 @@ from .submodules.sparse import ConvBlock
 from .submodules.layers import conv1x1, conv3x3, create_mslif
 from typing import Union, List
 
-__all__ = ['sew_resnet18', 'sew_resnet34', 'sew_resnet50', 'sew_resnet101', 'sew_resnet152']
+__all__ = ['sew_resnet18', 'sew_resnet18_w4', 'sew_resnet34', 'sew_resnet34_w4', 'sew_resnet50', 'sew_resnet101', 'sew_resnet152']
 
 
 class BasicBlock(nn.Module):
@@ -80,7 +80,8 @@ class Bottleneck(nn.Module):
 class SEWResNet(nn.Module):
     def __init__(self, block: Union[BasicBlock, Bottleneck], layers: List[int], num_classes=10,
                  zero_init_residual=False, groups=1, width_per_group=64,
-                 replace_stride_with_dilation=None, norm_layer: nn.Module = None, T=4, in_channels=1):
+                 replace_stride_with_dilation=None, norm_layer: nn.Module = None, T=4, in_channels=1,
+                 width_multiplier=1):
         super(SEWResNet, self).__init__()
         self.skip = ['conv1']
 
@@ -89,7 +90,7 @@ class SEWResNet(nn.Module):
             norm_layer = nn.BatchNorm2d
         self._norm_layer = norm_layer
 
-        self.inplanes = 64
+        self.inplanes = 64 * width_multiplier
         self.dilation = 1
         if replace_stride_with_dilation is None:
             replace_stride_with_dilation = [False, False, False]
@@ -104,20 +105,21 @@ class SEWResNet(nn.Module):
             sparse_neurons=True)
         self.maxpool = layer.SeqToANNContainer(nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
 
-        self.layer1 = self._make_layer(block, 64, layers[0])
-        self.layer2 = self._make_layer(block, 128, layers[1], stride=2,
+        self.layer1 = self._make_layer(block, 64 * width_multiplier, layers[0])
+        self.layer2 = self._make_layer(block, 128 * width_multiplier, layers[1], stride=2,
                                        dilate=replace_stride_with_dilation[0])
-        self.layer3 = self._make_layer(block, 256, layers[2], stride=2,
+        self.layer3 = self._make_layer(block, 256 * width_multiplier, layers[2], stride=2,
                                        dilate=replace_stride_with_dilation[1])
-        self.layer4 = self._make_layer(block, 512, layers[3], stride=2,
+        self.layer4 = self._make_layer(block, 512 * width_multiplier, layers[3], stride=2,
                                        dilate=replace_stride_with_dilation[2])
         self.avgpool = layer.SeqToANNContainer(nn.AdaptiveAvgPool2d((1, 1)))
 
-        if num_classes * 10 < 512 * block.expansion:
-            self.fc = nn.Linear(512 * block.expansion, num_classes * 10)
+        features = 512 * width_multiplier * block.expansion
+        if num_classes * 10 < features:
+            self.fc = nn.Linear(features, num_classes * 10)
             self.boost = nn.AvgPool1d(10, 10)
         else:
-            self.fc = nn.Linear(512 * block.expansion, num_classes)
+            self.fc = nn.Linear(features, num_classes)
             self.boost = None
 
         self.init_weight()
@@ -196,8 +198,16 @@ def sew_resnet18(**kwargs):
     return _sew_resnet(BasicBlock, [2, 2, 2, 2], **kwargs)
 
 
+def sew_resnet18_w4(**kwargs):
+    return _sew_resnet(BasicBlock, [2, 2, 2, 2], width_multiplier=4, **kwargs)
+
+
 def sew_resnet34(**kwargs):
     return _sew_resnet(BasicBlock, [3, 4, 6, 3], **kwargs)
+
+
+def sew_resnet34_w4(**kwargs):
+    return _sew_resnet(BasicBlock, [3, 4, 6, 3], width_multiplier=4, **kwargs)
 
 
 def sew_resnet50(**kwargs):

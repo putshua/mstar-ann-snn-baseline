@@ -325,7 +325,7 @@ class FusedResNet18(nn.Module):
 
 
 def optimize(model, *, sew=False, mode='triton'):
-    """Return an inference graph; use it under torch.inference_mode().
+    """Return an inference module; use under torch.no_grad() or torch.inference_mode().
 
     triton: LIF/mask/residual fusion, BN unchanged.
     bn_lif: also apply frozen BN affine inside the neuron kernel.

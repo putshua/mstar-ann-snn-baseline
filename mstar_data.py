@@ -4,10 +4,16 @@ from PIL import Image
 from torchvision import transforms
 
 
-def transforms_for(mean, std, augment=False):
-    ops = [transforms.Grayscale(1), transforms.CenterCrop(128)]
+def transforms_for(mean, std, augment=False, input_size=128, input_mode='center_crop'):
+    if input_mode == 'center_crop':
+        spatial = transforms.CenterCrop(input_size)
+    elif input_mode == 'resize_full':
+        spatial = transforms.Resize((input_size, input_size), antialias=True)
+    else:
+        raise ValueError(f'Unsupported input mode: {input_mode}')
+    ops = [transforms.Grayscale(1), spatial]
     if augment:
-        ops.append(transforms.RandomCrop(128, padding=4, padding_mode='reflect'))
+        ops.append(transforms.RandomCrop(input_size, padding=4, padding_mode='reflect'))
     return transforms.Compose(ops + [transforms.ToTensor(), transforms.Normalize([mean], [std])])
 
 

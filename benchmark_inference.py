@@ -1,7 +1,8 @@
-"""Classification metrics and a five-run CUDA Event inference timer."""
+"""Classification metrics and a five-run synchronized perf_counter timer."""
 import argparse
 import csv
 import json
+import time
 from pathlib import Path
 
 import numpy as np
@@ -28,8 +29,8 @@ def load_model(path):
         meta={key:cfg[key] for key in ('mean','std','classes')};sew=False
     else:
         architecture=cfg.get('model','sew_resnet18').removesuffix('_imagenet')
-        if architecture not in ('sew_resnet18','sew_resnet34'):
-            raise ValueError('This benchmark accepts SEW-ResNet-18/34')
+        if architecture not in ('sew_resnet18','sew_resnet18_w4','sew_resnet34','sew_resnet34_w4'):
+            raise ValueError('This benchmark accepts SEW-ResNet-18/34, including width x4')
         model=getattr(sew_resnet,architecture)(T=cfg['T'],zero_init_residual=cfg.get('zero_init_residual',False))
         for name,module in model.named_modules():
             if isinstance(module,ConvBlock):
@@ -61,7 +62,8 @@ def neuron_counts(model,x,sew):
         for hook in hooks:hook.remove()
     masks=[m.neuron_mask.mask_value for m in model.modules()
            if isinstance(m,ConvBlock) and m.neuron_mask.mask_value is not None]
-    total=sum(counts);remaining=sum(int((m>0).sum()) for m in masks) if masks else total
+    total=sum(counts)
+    remaining=sum(int((m>0).sum()) for m in masks) if masks else total
     mask_parameters=sum(m.numel() for m in masks)
     return {'type':'LIF' if sew else 'ReLU','activation_sites':len(counts),
             'total':total,'remaining':remaining,'remaining_fraction':remaining/total,
@@ -101,29 +103,33 @@ def classification(logits,labels):
 def measure(run,x,warmup,runs,iterations):
     for _ in range(warmup):run(x)
     torch.cuda.synchronize()
-    start=torch.cuda.Event(enable_timing=True);end=torch.cuda.Event(enable_timing=True)
     values=[]
     for _ in range(runs):
-        start.record()
+        torch.cuda.synchronize()
+        start=time.perf_counter()
         for _ in range(iterations):run(x)
-        end.record();end.synchronize()
-        values.append(start.elapsed_time(end)/iterations)
+        torch.cuda.synchronize()
+        values.append((time.perf_counter()-start)*1000/iterations)
     return {'mean_ms':float(np.mean(values)),'std_ms':float(np.std(values,ddof=1)) if len(values)>1 else 0.,'run_mean_ms':values,
-            'timer':'CUDA Event','iterations_per_run':iterations}
+            'timer':'time.perf_counter + torch.cuda.synchronize',
+            'warmup_iterations':warmup,'iterations_per_run':iterations}
 
 
-@torch.inference_mode()
+@torch.no_grad()
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--data',type=Path,required=True,help='SOC test directory')
     p.add_argument('--uploaded-dir',type=Path)
     p.add_argument('--ann-checkpoint',type=Path,help='Evaluate a supplied ANN checkpoint')
     p.add_argument('--sew-checkpoint',type=Path)
+    p.add_argument('--sew-modes',nargs='*',choices=['bn_lif','sparse'],default=[],
+                   help='Also time optimized kernels for a supplied SEW checkpoint')
     p.add_argument('--output',type=Path,default=ROOT/'results')
     p.add_argument('--evaluate',action='store_true',help='Recompute full test metrics once; otherwise reuse saved metrics')
+    p.add_argument('--evaluate-optimized',action='store_true',help='Evaluate new kernels once; reuse baseline metrics')
     p.add_argument('--runs',type=int,default=5)
     p.add_argument('--iterations',type=int,default=100)
-    p.add_argument('--warmup',type=int,default=20)
+    p.add_argument('--warmup',type=int,default=100)
     args=p.parse_args()
     if min(args.runs,args.iterations,args.warmup)<1:p.error('Counts must be positive')
     paired=args.ann_checkpoint is not None or args.sew_checkpoint is not None
@@ -135,7 +141,7 @@ def main():
     if paired:
         specs=[]
         if args.ann_checkpoint:specs.append(('ann',args.ann_checkpoint,()))
-        if args.sew_checkpoint:specs.append(('sew',args.sew_checkpoint,()))
+        if args.sew_checkpoint:specs.append(('sew',args.sew_checkpoint,tuple(args.sew_modes)))
     else:
         specs=[('ann',ROOT/'checkpoints/ann_resnet18.pt',('fold_bn',)),
                ('sew_dense',args.uploaded_dir/'sew_resnet18_mstar_dense/checkpoint_final.pth',('bn_lif',))]
@@ -144,13 +150,23 @@ def main():
     results={};images=None;shared=None;ds=None
     for group,checkpoint,modes in specs:
         original,meta,sew,cfg=load_model(checkpoint)
-        if paired:group=cfg.get('arch',cfg.get('model')).removesuffix('_imagenet')
-        signature=(meta['mean'],meta['std'],meta['classes'])
+        if paired:
+            group=cfg.get('arch',cfg.get('model')).removesuffix('_imagenet')
+            if sew and not cfg.get('not_prune_neuron',True):
+                penalty=f"{float(cfg['penalty_lmbda']):g}".replace('e-0','e-').replace('e+0','e+')
+                group+=f'_lambda{penalty}'
+        input_shape=tuple(meta.get('input_size',(1,128,128)))
+        input_mode=meta.get('input_mode','center_crop')
+        if input_shape!=(1,128,128) or input_mode!='center_crop':
+            group+=f'_{input_shape[-1]}_{input_mode}'
+        signature=(meta['mean'],meta['std'],meta['classes'],input_shape,input_mode)
         if shared is None:
-            shared=signature;ds=datasets.ImageFolder(args.data,transforms_for(meta['mean'],meta['std']))
+            shared=signature;ds=datasets.ImageFolder(args.data,transforms_for(
+                meta['mean'],meta['std'],input_size=input_shape[-1],input_mode=input_mode))
             if ds.classes!=meta['classes']:raise ValueError('Dataset class order differs from checkpoint')
             x=ds[0][0].unsqueeze(0).cuda()
-            if args.evaluate:images=torch.stack([ds[i][0] for i in range(len(ds))]).cuda()
+            if args.evaluate or args.evaluate_optimized:
+                images=torch.stack([ds[i][0] for i in range(len(ds))]).cuda()
         elif shared!=signature:raise ValueError('Models have different preprocessing')
         neurons=neuron_counts(original,x,sew)
         cases=[('baseline',original,lambda x,m=original,s=sew:reference(m,x,s))]
@@ -159,7 +175,7 @@ def main():
             cases.append((mode,model,lambda x,m=model:m(x)))
         for mode,model,run in cases:
             name=group+'/'+mode
-            if args.evaluate:
+            if args.evaluate or (args.evaluate_optimized and mode!='baseline'):
                 logits=torch.cat([run(images[i:i+1]).cpu() for i in range(len(images))]).numpy()
                 result=classification(logits,np.asarray(ds.targets))
                 for row in result['per_class']:row['class']=ds.classes[row.pop('class_index')]
@@ -168,11 +184,17 @@ def main():
             else:p.error(f'No saved metrics for {name}; run once with --evaluate')
             result['parameters']=sum(v.numel() for v in model.parameters())
             result['neurons']=neurons
+            result['preprocessing']={'input_size':list(input_shape),'input_mode':input_mode,
+                                     'mean':meta['mean'],'std':meta['std']}
             result['inference']=measure(run,x,args.warmup,args.runs,args.iterations)
+            result['inference']['execution']=('PyTorch eager, model.eval(), torch.no_grad()'
+                if mode=='baseline' else f'{mode} kernels, eager host, model.eval(), torch.no_grad()')
+            result['inference']['cuda_graph']=False
             results[name]=result
             print(name,'accuracy',result['metrics']['accuracy'],'ms',result['inference']['mean_ms'],flush=True)
         del cases,model,original
     report={'gpu':torch.cuda.get_device_name(0),'dtype':'float32','batch_size':1,'snn_time_steps':4,
+            'execution':'PyTorch eager, model.eval(), torch.no_grad()',
             'test_images':len(ds),'runs':args.runs,
             'std_definition':'Sample standard deviation (ddof=1) across run means.','models':results}
     args.output.mkdir(parents=True,exist_ok=True)

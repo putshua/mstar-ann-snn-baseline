@@ -43,6 +43,8 @@ def parse_args(argv=None):
     parser.add_argument('--not-prune-neuron', action='store_true')
     parser.add_argument('-b', '--batch-size', default=64, type=int)
     parser.add_argument('--T', default=4, type=int, help='simulation steps')
+    parser.add_argument('--input-size', default=128, type=int)
+    parser.add_argument('--input-mode', default='center_crop', choices=['center_crop', 'resize_full'])
     parser.add_argument('--model', default='sew_resnet18', help='model type')
     parser.add_argument('--dataset', default='MSTAR', choices=['MSTAR'], help='MSTAR SOC dataset')
     parser.add_argument('--augment', action='store_true', default=True, help='Additional augment')
@@ -163,6 +165,8 @@ def parse_args(argv=None):
         parser.error('Invalid epoch count')
     if args.T < 1 or args.batch_size < 1 or args.accumulate_step < 1:
         parser.error('T, batch-size and accumulate-step must be positive')
+    if args.input_size < 32 or args.input_size % 32:
+        parser.error('input-size must be a positive multiple of 32')
     if args.dataset != 'MSTAR':
         parser.error('Only the MSTAR dataset is supported')
     args.model = args.model.removesuffix('_imagenet')
@@ -265,7 +269,7 @@ def init_distributed(logger: logging.Logger, distributed_init_mode):
 def load_data(dataset_dir, distributed, args):
     dataset_train, dataset_test, args.mstar_metadata = load_mstar(
         dataset_dir, args.augment and not args.no_aug,
-        getattr(args, 'mstar_metadata', None), args.test_only)
+        getattr(args, 'mstar_metadata', None), args.test_only, args.input_size, args.input_mode)
     data_loader_train = None
     if dataset_train is not None:
         sampler = (torch.utils.data.distributed.DistributedSampler(dataset_train)
@@ -544,7 +548,8 @@ def create_model_and_inputs(args):
         for module in model.modules():
             if isinstance(module, ConvBlock):
                 module.sparse_neurons = False
-    return model, torch.rand(1, 1, 128, 128, device='cuda')
+    shape = (getattr(args, 'mstar_metadata', None) or {}).get('input_size', [1, args.input_size, args.input_size])
+    return model, torch.rand(1, *shape, device='cuda')
 
 
 def main():
@@ -560,7 +565,7 @@ def main():
         saved_config = resume_checkpoint.get('config', {})
         # Restore fields needed to reconstruct the network and evaluation protocol.
         for key in ('dataset', 'model', 'T', 'not_prune_neuron', 'zero_init_residual',
-                    'eval_final_only'):
+                    'eval_final_only', 'input_size', 'input_mode'):
             if key in saved_config:
                 setattr(args, key, saved_config[key])
         args.mstar_metadata = resume_checkpoint.get('mstar_metadata')

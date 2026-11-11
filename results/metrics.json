@@ -3745,17 +3745,40 @@
         "mask_parameters": 0
       },
       "inference": {
-        "mean_ms": 4.880445739746094,
-        "std_ms": 1.5444172385126396,
+        "mean_ms": 2.31944337207824,
+        "std_ms": 0.007387978762593984,
         "run_mean_ms": [
-          5.852857055664063,
-          5.810293579101563,
-          5.866940307617187,
-          4.572967529296875,
-          2.2991702270507814
+          2.3213272308930755,
+          2.3153071594424546,
+          2.331176029983908,
+          2.311957459896803,
+          2.3174489801749587
         ],
-        "timer": "CUDA Event",
-        "iterations_per_run": 100
+        "timer": "time.perf_counter + torch.cuda.synchronize",
+        "warmup_iterations": 100,
+        "iterations_per_run": 100,
+        "gpu_index": 3,
+        "gpu_idle_before_loading": true,
+        "cpu_affinity": [
+          0
+        ],
+        "execution": "PyTorch eager, model.eval(), torch.no_grad()",
+        "cuda_graph": false,
+        "extra_operator_fusion": false
+      },
+      "preprocessing": {
+        "input_size": [
+          1,
+          128,
+          128
+        ],
+        "input_mode": "center_crop",
+        "mean": 0.03035951371900553,
+        "std": 0.039027507911339444
+      },
+      "operations": {
+        "dense_conv_linear_gflops_per_image": 2.34095616,
+        "dense_flop_definition": "2 FLOPs per Conv/Linear MAC, batch size 1, 128x128, excludes BN/ReLU"
       }
     },
     "sew_resnet34_lambda2e-5/baseline": {
@@ -4281,17 +4304,3069 @@
         "mask_parameters": 1220608
       },
       "inference": {
-        "mean_ms": 16.106632568359377,
-        "std_ms": 6.438162442581498,
+        "mean_ms": 12.331973816268146,
+        "std_ms": 0.9227515383983821,
         "run_mean_ms": [
-          11.04619140625,
-          22.842783203125,
-          23.43374755859375,
-          12.1547265625,
-          11.055714111328125
+          12.474627499468625,
+          12.549860288854688,
+          11.615132710430771,
+          11.33523692144081,
+          13.685011661145836
+        ],
+        "timer": "time.perf_counter + torch.cuda.synchronize",
+        "warmup_iterations": 100,
+        "iterations_per_run": 100,
+        "gpu_index": 3,
+        "gpu_idle_before_loading": true,
+        "cpu_affinity": [
+          0
+        ],
+        "execution": "PyTorch eager, model.eval(), torch.no_grad()",
+        "cuda_graph": false,
+        "extra_operator_fusion": false
+      },
+      "preprocessing": {
+        "input_size": [
+          1,
+          128,
+          128
+        ],
+        "input_mode": "center_crop",
+        "mean": 0.03035951371900553,
+        "std": 0.039027507911339444
+      },
+      "operations": {
+        "dense_conv_linear_gflops_per_image": 9.287122944,
+        "effective_gsops_per_image": 0.000927020698556701,
+        "dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks",
+        "sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs"
+      },
+      "inference_graph_parameters": 22550308
+    },
+    "sew_resnet18_w4_lambda1e-5/baseline": {
+      "metrics": {
+        "accuracy": 0.9298969072164949,
+        "top3_accuracy": 0.9954639175257732,
+        "top5_accuracy": 0.9991752577319588,
+        "balanced_accuracy": 0.9282365444774203,
+        "macro_precision": 0.9323253567678311,
+        "macro_recall": 0.9282365444774203,
+        "macro_f1": 0.9293816650200333,
+        "weighted_f1": 0.9297053973012246,
+        "roc_auc_macro_ovr": 0.9962230574466313,
+        "roc_auc_micro_ovr": 0.9964376613407965,
+        "map_macro": 0.9736206212151449,
+        "ap_micro": 0.9758277973049126,
+        "cohen_kappa": 0.9218673152548168,
+        "mcc": 0.9220860710144352,
+        "log_loss": 0.2258154372085739,
+        "brier_multiclass": 0.11011512873388912,
+        "ece_15_bins": 0.013973287973075826
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.92,
+          "recall": 0.8394160583941606,
+          "f1": 0.8778625954198473,
+          "specificity": 0.9907019990702,
+          "roc_auc_ovr": 0.9932029577144563,
+          "ap_ovr": 0.9502252074452998,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.9257142857142857,
+          "recall": 0.8307692307692308,
+          "f1": 0.8756756756756757,
+          "specificity": 0.9941704035874439,
+          "roc_auc_ovr": 0.9933954237093251,
+          "ap_ovr": 0.9473583979142958,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.9591078066914498,
+          "recall": 0.9416058394160584,
+          "f1": 0.9502762430939227,
+          "specificity": 0.99488609948861,
+          "roc_auc_ovr": 0.9981845144169915,
+          "ap_ovr": 0.9778996713509924,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 0.9786096256684492,
+          "recall": 0.9384615384615385,
+          "f1": 0.9581151832460733,
+          "specificity": 0.9982062780269059,
+          "roc_auc_ovr": 0.9927906174542945,
+          "ap_ovr": 0.9766952854773815,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.9693877551020408,
+          "recall": 0.9693877551020408,
+          "f1": 0.9693877551020408,
+          "specificity": 0.9973082099596231,
+          "roc_auc_ovr": 0.9985671253696633,
+          "ap_ovr": 0.9869032447995169,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.9601449275362319,
+          "recall": 0.9671532846715328,
+          "f1": 0.9636363636363636,
+          "specificity": 0.99488609948861,
+          "roc_auc_ovr": 0.9978536548948546,
+          "ap_ovr": 0.9918264427875809,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.8474025974025974,
+          "recall": 0.9560439560439561,
+          "f1": 0.8984509466437177,
+          "specificity": 0.9781598513011153,
+          "roc_auc_ovr": 0.9952782657243624,
+          "ap_ovr": 0.9664105570657667,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.8872549019607843,
+          "recall": 0.923469387755102,
+          "f1": 0.905,
+          "specificity": 0.9896814715118888,
+          "roc_auc_ovr": 0.9953809249137071,
+          "ap_ovr": 0.9561016212237303,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.9525547445255474,
+          "recall": 0.9525547445255474,
+          "f1": 0.9525547445255474,
+          "specificity": 0.9939562993956299,
+          "roc_auc_ovr": 0.9990074214335889,
+          "ap_ovr": 0.992407294373797,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9230769230769231,
+          "recall": 0.9635036496350365,
+          "f1": 0.9428571428571428,
+          "specificity": 0.9897721989772199,
+          "roc_auc_ovr": 0.998569668835069,
+          "ap_ovr": 0.9903784897130881,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          230,
+          4,
+          2,
+          0,
+          2,
+          0,
+          33,
+          0,
+          3,
+          0
+        ],
+        [
+          9,
+          162,
+          2,
+          0,
+          1,
+          0,
+          3,
+          17,
+          1,
+          0
+        ],
+        [
+          3,
+          5,
+          258,
+          3,
+          0,
+          0,
+          1,
+          1,
+          3,
+          0
+        ],
+        [
+          0,
+          1,
+          4,
+          183,
+          2,
+          1,
+          0,
+          4,
+          0,
+          0
+        ],
+        [
+          1,
+          3,
+          1,
+          1,
+          190,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          265,
+          0,
+          0,
+          0,
+          7
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          261,
+          1,
+          3,
+          8
+        ],
+        [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          9,
+          181,
+          0,
+          3
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          1,
+          5,
+          1,
+          0,
+          261,
+          4
+        ],
+        [
+          0,
+          0,
+          2,
+          0,
+          0,
+          5,
+          0,
+          0,
+          3,
+          264
+        ]
+      ],
+      "parameters": 182019940,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 20,
+        "total": 3244032,
+        "remaining": 8668,
+        "remaining_fraction": 0.0026719835069444445,
+        "network_parameters": 178775908,
+        "mask_parameters": 3244032,
+        "remaining_fraction_of_ann_resnet34": 0.007451446963028169
+      },
+      "inference": {
+        "mean_ms": 6.397466186523438,
+        "std_ms": 0.08863787056880307,
+        "run_mean_ms": [
+          6.444718627929688,
+          6.525302734375,
+          6.379224853515625,
+          6.3294915771484375,
+          6.308593139648438
         ],
         "timer": "CUDA Event",
         "iterations_per_run": 100
+      },
+      "training": {
+        "model": "sew_resnet18_w4",
+        "stage_channels": [
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "seed": 0,
+        "T": 4,
+        "penalty_lambda": 1e-05,
+        "search_epochs": 100,
+        "finetune_epochs": 20,
+        "batch_size": 64,
+        "initialization": "scratch",
+        "checkpoint_selection": "final"
+      },
+      "operations": {
+        "dense_conv_linear_gflops_per_image": 70.971359232,
+        "effective_gsops_per_image": 0.0007355847088659793,
+        "dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks",
+        "sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs"
+      }
+    },
+    "sew_resnet18_w4_lambda1e-6/baseline": {
+      "metrics": {
+        "accuracy": 0.9781443298969072,
+        "top3_accuracy": 0.9987628865979381,
+        "top5_accuracy": 0.9995876288659794,
+        "balanced_accuracy": 0.9781391253862578,
+        "macro_precision": 0.9788806252803125,
+        "macro_recall": 0.9781391253862578,
+        "macro_f1": 0.9783520749169321,
+        "weighted_f1": 0.9781297349115015,
+        "roc_auc_macro_ovr": 0.9994556569073053,
+        "roc_auc_micro_ovr": 0.9994574839692494,
+        "map_macro": 0.9965648718198571,
+        "ap_micro": 0.9962811361161675,
+        "cohen_kappa": 0.975647014440501,
+        "mcc": 0.9756830680873102,
+        "log_loss": 0.07519080225240661,
+        "brier_multiclass": 0.034334835315491224,
+        "ece_15_bins": 0.00780643075333529
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.981203007518797,
+          "recall": 0.9525547445255474,
+          "f1": 0.9666666666666667,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9995266163760194,
+          "ap_ovr": 0.996657239462397,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.9893617021276596,
+          "recall": 0.9538461538461539,
+          "f1": 0.9712793733681462,
+          "specificity": 0.9991031390134529,
+          "roc_auc_ovr": 0.9996412556053812,
+          "ap_ovr": 0.9961939051240261,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.9891304347826086,
+          "recall": 0.9963503649635036,
+          "f1": 0.9927272727272727,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9995317065225138,
+          "ap_ovr": 0.9935555178680375,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 1.0,
+          "recall": 0.9794871794871794,
+          "f1": 0.9896373056994818,
+          "specificity": 1.0,
+          "roc_auc_ovr": 0.9977969414740715,
+          "ap_ovr": 0.9943380040489428,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.9702970297029703,
+          "recall": 1.0,
+          "f1": 0.9849246231155779,
+          "specificity": 0.9973082099596231,
+          "roc_auc_ovr": 0.9999015757043059,
+          "ap_ovr": 0.9988117346596092,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.9818181818181818,
+          "recall": 0.9854014598540146,
+          "f1": 0.9836065573770492,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.999694591210335,
+          "ap_ovr": 0.9978099858568203,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.966789667896679,
+          "recall": 0.9597069597069597,
+          "f1": 0.9632352941176471,
+          "specificity": 0.995817843866171,
+          "roc_auc_ovr": 0.9993463785285346,
+          "ap_ovr": 0.9953964166024253,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.9696969696969697,
+          "recall": 0.9795918367346939,
+          "f1": 0.9746192893401016,
+          "specificity": 0.9973082099596231,
+          "roc_auc_ovr": 0.9996909934902628,
+          "ap_ovr": 0.9968188176611827,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.9925925925925926,
+          "recall": 0.9781021897810219,
+          "f1": 0.9852941176470589,
+          "specificity": 0.99907019990702,
+          "roc_auc_ovr": 0.9996097554354281,
+          "ap_ovr": 0.997559548488739,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9479166666666666,
+          "recall": 0.9963503649635036,
+          "f1": 0.9715302491103203,
+          "specificity": 0.99302649930265,
+          "roc_auc_ovr": 0.999816754726201,
+          "ap_ovr": 0.9985075484263909,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          261,
+          1,
+          0,
+          0,
+          5,
+          0,
+          6,
+          0,
+          1,
+          0
+        ],
+        [
+          3,
+          186,
+          0,
+          0,
+          1,
+          0,
+          0,
+          5,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          273,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          3,
+          191,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          196,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          270,
+          0,
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          262,
+          0,
+          1,
+          9
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          192,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          268,
+          2
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          273
+        ]
+      ],
+      "parameters": 182019940,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 20,
+        "total": 3244032,
+        "remaining": 69374,
+        "remaining_fraction": 0.021385115806502524,
+        "network_parameters": 178775908,
+        "mask_parameters": 3244032,
+        "remaining_fraction_of_ann_resnet34": 0.059637365206866196
+      },
+      "inference": {
+        "mean_ms": 6.5752058105468745,
+        "std_ms": 0.38758438729943306,
+        "run_mean_ms": [
+          6.59609619140625,
+          6.4264501953125,
+          7.233787231445312,
+          6.353222045898438,
+          6.266473388671875
+        ],
+        "timer": "CUDA Event",
+        "iterations_per_run": 100
+      },
+      "training": {
+        "model": "sew_resnet18_w4",
+        "stage_channels": [
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "seed": 0,
+        "T": 4,
+        "penalty_lambda": 1e-06,
+        "search_epochs": 100,
+        "finetune_epochs": 20,
+        "batch_size": 64,
+        "initialization": "scratch",
+        "checkpoint_selection": "final"
+      },
+      "operations": {
+        "dense_conv_linear_gflops_per_image": 70.971359232,
+        "effective_gsops_per_image": 0.02805708987381443,
+        "dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks",
+        "sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs"
+      }
+    },
+    "sew_resnet18_w4_lambda2e-6/baseline": {
+      "metrics": {
+        "accuracy": 0.9756701030927835,
+        "top3_accuracy": 0.9983505154639175,
+        "top5_accuracy": 1.0,
+        "balanced_accuracy": 0.9747665455851067,
+        "macro_precision": 0.9758405707620398,
+        "macro_recall": 0.9747665455851067,
+        "macro_f1": 0.9749852914200778,
+        "weighted_f1": 0.9756468785393081,
+        "roc_auc_macro_ovr": 0.9993303398734049,
+        "roc_auc_micro_ovr": 0.9993169849198759,
+        "map_macro": 0.9954879204713926,
+        "ap_micro": 0.9953523645742571,
+        "cohen_kappa": 0.9728900059004384,
+        "mcc": 0.9729423676318669,
+        "log_loss": 0.08357439891501099,
+        "brier_multiclass": 0.036476976450925874,
+        "ece_15_bins": 0.006228902089898274
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.9777777777777777,
+          "recall": 0.9635036496350365,
+          "f1": 0.9705882352941176,
+          "specificity": 0.99721059972106,
+          "roc_auc_ovr": 0.9991516422509306,
+          "ap_ovr": 0.9947790091312002,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.988950276243094,
+          "recall": 0.9179487179487179,
+          "f1": 0.9521276595744681,
+          "specificity": 0.9991031390134529,
+          "roc_auc_ovr": 0.9995883638036105,
+          "ap_ovr": 0.9953987707804278,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.974910394265233,
+          "recall": 0.9927007299270073,
+          "f1": 0.9837251356238698,
+          "specificity": 0.9967456996745699,
+          "roc_auc_ovr": 0.9994299035926254,
+          "ap_ovr": 0.9927730979656528,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 1.0,
+          "recall": 0.9692307692307692,
+          "f1": 0.984375,
+          "specificity": 1.0,
+          "roc_auc_ovr": 0.997654363573646,
+          "ap_ovr": 0.9913197363817746,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.9798994974874372,
+          "recall": 0.9948979591836735,
+          "f1": 0.9873417721518988,
+          "specificity": 0.9982054733064154,
+          "roc_auc_ovr": 0.9997619505406469,
+          "ap_ovr": 0.9969258075233571,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.9746376811594203,
+          "recall": 0.9817518248175182,
+          "f1": 0.9781818181818182,
+          "specificity": 0.9967456996745699,
+          "roc_auc_ovr": 0.9995690342634728,
+          "ap_ovr": 0.9965732291807079,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.9887640449438202,
+          "recall": 0.967032967032967,
+          "f1": 0.9777777777777777,
+          "specificity": 0.9986059479553904,
+          "roc_auc_ovr": 0.9996544657325327,
+          "ap_ovr": 0.9973656229769888,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.9238095238095239,
+          "recall": 0.9897959183673469,
+          "f1": 0.9556650246305419,
+          "specificity": 0.9928218932256617,
+          "roc_auc_ovr": 0.999496433835984,
+          "ap_ovr": 0.9943687126968048,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.9816849816849816,
+          "recall": 0.9781021897810219,
+          "f1": 0.979890310786106,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9991211013719642,
+          "ap_ovr": 0.9963024875686198,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9679715302491103,
+          "recall": 0.9927007299270073,
+          "f1": 0.9801801801801802,
+          "specificity": 0.99581589958159,
+          "roc_auc_ovr": 0.9998761397686359,
+          "ap_ovr": 0.9990727305083915,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          264,
+          1,
+          0,
+          0,
+          4,
+          0,
+          1,
+          1,
+          3,
+          0
+        ],
+        [
+          2,
+          179,
+          2,
+          0,
+          0,
+          0,
+          0,
+          12,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          272,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          4,
+          189,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          195,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          269,
+          0,
+          0,
+          0,
+          4
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          264,
+          1,
+          2,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          194,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          268,
+          2
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          272
+        ]
+      ],
+      "parameters": 182019940,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 20,
+        "total": 3244032,
+        "remaining": 37211,
+        "remaining_fraction": 0.011470602016256314,
+        "network_parameters": 178775908,
+        "mask_parameters": 3244032,
+        "remaining_fraction_of_ann_resnet34": 0.031988439425616196
+      },
+      "inference": {
+        "mean_ms": 6.875759521484374,
+        "std_ms": 0.5834787504609156,
+        "run_mean_ms": [
+          6.59462158203125,
+          6.594185791015625,
+          6.602992553710937,
+          6.668977661132812,
+          7.91802001953125
+        ],
+        "timer": "CUDA Event",
+        "iterations_per_run": 100
+      },
+      "training": {
+        "model": "sew_resnet18_w4",
+        "stage_channels": [
+          256,
+          512,
+          1024,
+          2048
+        ],
+        "seed": 0,
+        "T": 4,
+        "penalty_lambda": 2e-06,
+        "search_epochs": 100,
+        "finetune_epochs": 20,
+        "batch_size": 64,
+        "initialization": "scratch",
+        "checkpoint_selection": "final"
+      },
+      "operations": {
+        "dense_conv_linear_gflops_per_image": 70.971359232,
+        "effective_gsops_per_image": 0.010061732262680412,
+        "dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks",
+        "sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs"
+      }
+    },
+    "sew_resnet34_lambda1e-6_192_resize_full/baseline": {
+      "metrics": {
+        "accuracy": 0.9764948453608248,
+        "top3_accuracy": 0.9987628865979381,
+        "top5_accuracy": 1.0,
+        "balanced_accuracy": 0.9772520979194598,
+        "macro_precision": 0.9778876899465001,
+        "macro_recall": 0.9772520979194598,
+        "macro_f1": 0.9772428672227631,
+        "weighted_f1": 0.9763825562347391,
+        "roc_auc_macro_ovr": 0.9996099229259299,
+        "roc_auc_micro_ovr": 0.9995523718425621,
+        "map_macro": 0.9974591744648305,
+        "ap_micro": 0.9971234731250997,
+        "cohen_kappa": 0.9738097678718374,
+        "mcc": 0.9738961332957501,
+        "log_loss": 0.07298703047826564,
+        "brier_multiclass": 0.03529818795488684,
+        "ece_15_bins": 0.010784225662346799
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.9809160305343512,
+          "recall": 0.9379562043795621,
+          "f1": 0.9589552238805971,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.999509649221038,
+          "ap_ovr": 0.9964181291433807,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.9948186528497409,
+          "recall": 0.9846153846153847,
+          "f1": 0.9896907216494846,
+          "specificity": 0.9995515695067264,
+          "roc_auc_ovr": 0.9998965160400138,
+          "ap_ovr": 0.9988248724515816,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.9479166666666666,
+          "recall": 0.9963503649635036,
+          "f1": 0.9715302491103203,
+          "specificity": 0.99302649930265,
+          "roc_auc_ovr": 0.9993654284036961,
+          "ap_ovr": 0.99486955054471,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 0.9894179894179894,
+          "recall": 0.958974358974359,
+          "f1": 0.9739583333333334,
+          "specificity": 0.9991031390134529,
+          "roc_auc_ovr": 0.9986087156490744,
+          "ap_ovr": 0.992340335272928,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.9898477157360406,
+          "recall": 0.9948979591836735,
+          "f1": 0.9923664122137404,
+          "specificity": 0.9991027366532077,
+          "roc_auc_ovr": 0.9999954221257816,
+          "ap_ovr": 0.9999484642341785,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.989010989010989,
+          "recall": 0.9854014598540146,
+          "f1": 0.9872029250457038,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9998218448726954,
+          "ap_ovr": 0.9983899952405408,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.984375,
+          "recall": 0.9230769230769231,
+          "f1": 0.9527410207939508,
+          "specificity": 0.9981412639405205,
+          "roc_auc_ovr": 0.9990314827675422,
+          "ap_ovr": 0.9950272757541374,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.9653465346534653,
+          "recall": 0.9948979591836735,
+          "f1": 0.9798994974874372,
+          "specificity": 0.996859578286227,
+          "roc_auc_ovr": 0.9999244650753976,
+          "ap_ovr": 0.9991893593653003,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.9891304347826086,
+          "recall": 0.9963503649635036,
+          "f1": 0.9927272727272727,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9999779426985241,
+          "ap_ovr": 0.9998335486241074,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9480968858131488,
+          "recall": 1.0,
+          "f1": 0.9733570159857904,
+          "specificity": 0.99302649930265,
+          "roc_auc_ovr": 0.9999677624055353,
+          "ap_ovr": 0.9997502140174406,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          257,
+          0,
+          10,
+          2,
+          0,
+          0,
+          4,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          192,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          273,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          3,
+          187,
+          1,
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          195,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          270,
+          0,
+          0,
+          2,
+          1
+        ],
+        [
+          5,
+          0,
+          0,
+          0,
+          0,
+          2,
+          252,
+          0,
+          1,
+          13
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          195,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          273,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          274
+        ]
+      ],
+      "parameters": 24076068,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 36,
+        "total": 2746368,
+        "remaining": 77460,
+        "remaining_fraction": 0.02820452321029083,
+        "network_parameters": 21329700,
+        "mask_parameters": 2746368
+      },
+      "preprocessing": {
+        "input_size": [
+          1,
+          192,
+          192
+        ],
+        "input_mode": "resize_full",
+        "mean": 0.02972175931408394,
+        "std": 0.033701714265642675
+      },
+      "inference": {
+        "mean_ms": 12.507905459962785,
+        "std_ms": 0.39449626876010474,
+        "run_mean_ms": [
+          12.570803679991513,
+          12.13280359050259,
+          12.604118220042437,
+          12.144059459678829,
+          13.087742349598557
+        ],
+        "timer": "time.perf_counter + torch.cuda.synchronize",
+        "warmup_iterations": 100,
+        "iterations_per_run": 100,
+        "gpu_index": 3,
+        "gpu_idle_before_loading": true,
+        "cpu_affinity": [
+          0
+        ],
+        "execution": "PyTorch eager, model.eval(), torch.no_grad()",
+        "cuda_graph": false,
+        "extra_operator_fusion": false
+      },
+      "training": {
+        "model": "sew_resnet34",
+        "seed": 0,
+        "T": 4,
+        "penalty_lambda": 1e-06,
+        "search_epochs": 100,
+        "finetune_epochs": 20,
+        "batch_size": 64,
+        "initialization": "scratch",
+        "checkpoint_selection": "final"
+      },
+      "operations": {
+        "dense_conv_linear_gflops_per_image": 20.895514624,
+        "effective_gsops_per_image": 0.02200040877113402,
+        "dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks",
+        "sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs"
+      },
+      "inference_graph_parameters": 24076068
+    },
+    "sew_resnet34_lambda3e-6_192_resize_full/baseline": {
+      "metrics": {
+        "accuracy": 0.9785567010309278,
+        "top3_accuracy": 0.9991752577319588,
+        "top5_accuracy": 0.9995876288659794,
+        "balanced_accuracy": 0.9783536154495488,
+        "macro_precision": 0.9780524949687109,
+        "macro_recall": 0.9783536154495488,
+        "macro_f1": 0.9780628815826395,
+        "weighted_f1": 0.9785374079497544,
+        "roc_auc_macro_ovr": 0.9993328904794525,
+        "roc_auc_micro_ovr": 0.9994039560231929,
+        "map_macro": 0.9954160994299581,
+        "ap_micro": 0.9955607760569494,
+        "cohen_kappa": 0.976108980939097,
+        "mcc": 0.9761374620538816,
+        "log_loss": 0.06972439287571822,
+        "brier_multiclass": 0.032520492401302496,
+        "ece_15_bins": 0.003254188672530542
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.9814814814814815,
+          "recall": 0.9671532846715328,
+          "f1": 0.9742647058823529,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9998269350191898,
+          "ap_ovr": 0.9986772879191828,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.9841269841269841,
+          "recall": 0.9538461538461539,
+          "f1": 0.96875,
+          "specificity": 0.9986547085201793,
+          "roc_auc_ovr": 0.9988984707370359,
+          "ap_ovr": 0.9924233683825785,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.9816176470588235,
+          "recall": 0.9744525547445255,
+          "f1": 0.978021978021978,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9993009532147669,
+          "ap_ovr": 0.9793244289422054,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 0.9642857142857143,
+          "recall": 0.9692307692307692,
+          "f1": 0.9667519181585678,
+          "specificity": 0.9968609865470852,
+          "roc_auc_ovr": 0.9962561802920546,
+          "ap_ovr": 0.9912622751944873,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.9897435897435898,
+          "recall": 0.9846938775510204,
+          "f1": 0.9872122762148338,
+          "specificity": 0.9991027366532077,
+          "roc_auc_ovr": 0.9999519323207076,
+          "ap_ovr": 0.9994625094346193,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.989010989010989,
+          "recall": 0.9854014598540146,
+          "f1": 0.9872029250457038,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9996962879258332,
+          "ap_ovr": 0.9981355659253682,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.9849624060150376,
+          "recall": 0.9597069597069597,
+          "f1": 0.9721706864564007,
+          "specificity": 0.9981412639405205,
+          "roc_auc_ovr": 0.9996374443400465,
+          "ap_ovr": 0.9974710636267631,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.9514563106796117,
+          "recall": 1.0,
+          "f1": 0.9751243781094527,
+          "specificity": 0.9955136832660386,
+          "roc_auc_ovr": 0.9998489301507952,
+          "ap_ovr": 0.9980990770460965,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.9890510948905109,
+          "recall": 0.9890510948905109,
+          "f1": 0.9890510948905109,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9999474018195577,
+          "ap_ovr": 0.9995896551059054,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9647887323943662,
+          "recall": 1.0,
+          "f1": 0.982078853046595,
+          "specificity": 0.9953509995351,
+          "roc_auc_ovr": 0.9999643689745391,
+          "ap_ovr": 0.9997157627223743,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          265,
+          1,
+          2,
+          2,
+          0,
+          0,
+          3,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          186,
+          0,
+          1,
+          1,
+          0,
+          0,
+          7,
+          0,
+          0
+        ],
+        [
+          2,
+          1,
+          267,
+          2,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          3,
+          189,
+          1,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          2,
+          193,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          270,
+          1,
+          0,
+          2,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          262,
+          0,
+          0,
+          9
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          196,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0,
+          271,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          274
+        ]
+      ],
+      "parameters": 24076068,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 36,
+        "total": 2746368,
+        "remaining": 30930,
+        "remaining_fraction": 0.011262146951901565,
+        "network_parameters": 21329700,
+        "mask_parameters": 2746368
+      },
+      "preprocessing": {
+        "input_size": [
+          1,
+          192,
+          192
+        ],
+        "input_mode": "resize_full",
+        "mean": 0.02972175931408394,
+        "std": 0.033701714265642675
+      },
+      "inference": {
+        "mean_ms": 11.986267324071378,
+        "std_ms": 0.42229280496071603,
+        "run_mean_ms": [
+          12.080866799224168,
+          12.092073750682175,
+          12.585365229751915,
+          11.50090198032558,
+          11.67212886037305
+        ],
+        "timer": "time.perf_counter + torch.cuda.synchronize",
+        "warmup_iterations": 100,
+        "iterations_per_run": 100,
+        "gpu_index": 3,
+        "gpu_idle_before_loading": true,
+        "cpu_affinity": [
+          0
+        ],
+        "execution": "PyTorch eager, model.eval(), torch.no_grad()",
+        "cuda_graph": false,
+        "extra_operator_fusion": false
+      },
+      "training": {
+        "model": "sew_resnet34",
+        "seed": 0,
+        "T": 4,
+        "penalty_lambda": 3e-06,
+        "search_epochs": 100,
+        "finetune_epochs": 20,
+        "batch_size": 64,
+        "initialization": "scratch",
+        "checkpoint_selection": "final"
+      },
+      "operations": {
+        "dense_conv_linear_gflops_per_image": 20.895514624,
+        "effective_gsops_per_image": 0.005286010490309278,
+        "dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks",
+        "sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs"
+      },
+      "inference_graph_parameters": 24076068
+    },
+    "sew_resnet18_lambda6e-6_192_resize_full/baseline": {
+      "metrics": {
+        "accuracy": 0.9703092783505155,
+        "top3_accuracy": 0.9991752577319588,
+        "top5_accuracy": 0.9991752577319588,
+        "balanced_accuracy": 0.9710396971815115,
+        "macro_precision": 0.9705792606791037,
+        "macro_recall": 0.9710396971815115,
+        "macro_f1": 0.9705725798121829,
+        "weighted_f1": 0.970248156785174,
+        "roc_auc_macro_ovr": 0.9996122359204478,
+        "roc_auc_micro_ovr": 0.9994740543923666,
+        "map_macro": 0.9969945773957963,
+        "ap_micro": 0.9961358059028216,
+        "cohen_kappa": 0.966921048727796,
+        "mcc": 0.9669782072743329,
+        "log_loss": 0.09501114505537131,
+        "brier_multiclass": 0.04340923301064424,
+        "ece_15_bins": 0.017038925614130843
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.9701492537313433,
+          "recall": 0.948905109489051,
+          "f1": 0.959409594095941,
+          "specificity": 0.9962807996280799,
+          "roc_auc_ovr": 0.999375608696685,
+          "ap_ovr": 0.9956312197375489,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.9689119170984456,
+          "recall": 0.958974358974359,
+          "f1": 0.9639175257731959,
+          "specificity": 0.9973094170403587,
+          "roc_auc_ovr": 0.9995584684373923,
+          "ap_ovr": 0.9954076265372017,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.9708029197080292,
+          "recall": 0.9708029197080292,
+          "f1": 0.9708029197080292,
+          "specificity": 0.9962807996280799,
+          "roc_auc_ovr": 0.9994044528601533,
+          "ap_ovr": 0.9957837316295126,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 0.9842105263157894,
+          "recall": 0.958974358974359,
+          "f1": 0.9714285714285714,
+          "specificity": 0.9986547085201793,
+          "roc_auc_ovr": 0.9996941474071519,
+          "ap_ovr": 0.9967313166696581,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.97,
+          "recall": 0.9897959183673469,
+          "f1": 0.9797979797979798,
+          "specificity": 0.9973082099596231,
+          "roc_auc_ovr": 0.9998809752703235,
+          "ap_ovr": 0.9986149893525426,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.9745454545454545,
+          "recall": 0.9781021897810219,
+          "f1": 0.97632058287796,
+          "specificity": 0.9967456996745699,
+          "roc_auc_ovr": 0.999180486414399,
+          "ap_ovr": 0.9955540230041146,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.9768339768339769,
+          "recall": 0.9267399267399268,
+          "f1": 0.9511278195488722,
+          "specificity": 0.9972118959107806,
+          "roc_auc_ovr": 0.9993736127565125,
+          "ap_ovr": 0.9952150070813052,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.9560975609756097,
+          "recall": 1.0,
+          "f1": 0.9775561097256857,
+          "specificity": 0.9959623149394348,
+          "roc_auc_ovr": 0.9999175982640701,
+          "ap_ovr": 0.9990581503213438,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.996309963099631,
+          "recall": 0.9854014598540146,
+          "f1": 0.9908256880733946,
+          "specificity": 0.99953509995351,
+          "roc_auc_ovr": 0.9999423116730632,
+          "ap_ovr": 0.9995672443479547,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9379310344827586,
+          "recall": 0.9927007299270073,
+          "f1": 0.9645390070921985,
+          "specificity": 0.9916317991631799,
+          "roc_auc_ovr": 0.9997946974247252,
+          "ap_ovr": 0.998382465276781,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          260,
+          2,
+          5,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          3
+        ],
+        [
+          0,
+          187,
+          0,
+          1,
+          1,
+          0,
+          0,
+          6,
+          0,
+          0
+        ],
+        [
+          1,
+          2,
+          266,
+          1,
+          2,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          3,
+          187,
+          3,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          1,
+          194,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          268,
+          1,
+          0,
+          0,
+          3
+        ],
+        [
+          5,
+          0,
+          0,
+          0,
+          0,
+          2,
+          253,
+          0,
+          1,
+          12
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          196,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          1,
+          0,
+          270,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          272
+        ]
+      ],
+      "parameters": 13046308,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 20,
+        "total": 1824768,
+        "remaining": 16847,
+        "remaining_fraction": 0.009232406530583614,
+        "network_parameters": 11221540,
+        "mask_parameters": 1824768
+      },
+      "preprocessing": {
+        "input_size": [
+          1,
+          192,
+          192
+        ],
+        "input_mode": "resize_full",
+        "mean": 0.02972175931408394,
+        "std": 0.033701714265642675
+      },
+      "inference": {
+        "mean_ms": 7.405620702076703,
+        "std_ms": 1.0691752840934232,
+        "run_mean_ms": [
+          6.881008429918438,
+          6.891504740342498,
+          9.31671679019928,
+          6.9796543987467885,
+          6.959219151176512
+        ],
+        "timer": "time.perf_counter + torch.cuda.synchronize",
+        "warmup_iterations": 100,
+        "iterations_per_run": 100,
+        "gpu_index": 3,
+        "gpu_idle_before_loading": true,
+        "cpu_affinity": [
+          0
+        ],
+        "execution": "PyTorch eager, model.eval(), torch.no_grad()",
+        "cuda_graph": false,
+        "extra_operator_fusion": false
+      },
+      "training": {
+        "model": "sew_resnet18",
+        "seed": 0,
+        "T": 4,
+        "penalty_lambda": 6e-06,
+        "search_epochs": 100,
+        "finetune_epochs": 20,
+        "batch_size": 64,
+        "initialization": "scratch",
+        "checkpoint_selection": "final",
+        "gpu_index": 2
+      },
+      "operations": {
+        "effective_gsops_per_image": 0.0013551101777319588,
+        "sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs",
+        "dense_conv_linear_gflops_per_image": 10.023878656,
+        "dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks"
+      },
+      "inference_graph_parameters": 13046308
+    },
+    "sew_resnet34_lambda1e-5/sparse": {
+      "metrics": {
+        "accuracy": 0.9447422680412371,
+        "top3_accuracy": 0.9971134020618557,
+        "top5_accuracy": 0.9991752577319588,
+        "balanced_accuracy": 0.9445978526166222,
+        "macro_precision": 0.9464120962101997,
+        "macro_recall": 0.9445978526166222,
+        "macro_f1": 0.945025648386282,
+        "weighted_f1": 0.9446899292078923,
+        "roc_auc_macro_ovr": 0.9982558284440148,
+        "roc_auc_micro_ovr": 0.9982451033880093,
+        "map_macro": 0.9876899733244479,
+        "ap_micro": 0.9872270411173782,
+        "cohen_kappa": 0.9384247187945305,
+        "mcc": 0.9385253988665804,
+        "log_loss": 0.16361853086879888,
+        "brier_multiclass": 0.08066350802748398,
+        "ece_15_bins": 0.02128134523730549
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.9351145038167938,
+          "recall": 0.8941605839416058,
+          "f1": 0.914179104477612,
+          "specificity": 0.9920966992096699,
+          "roc_auc_ovr": 0.9966795277701425,
+          "ap_ovr": 0.9792993450318269,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.9608938547486033,
+          "recall": 0.882051282051282,
+          "f1": 0.9197860962566845,
+          "specificity": 0.9968609865470852,
+          "roc_auc_ovr": 0.9983649534322181,
+          "ap_ovr": 0.9829933582196104,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.9737827715355806,
+          "recall": 0.948905109489051,
+          "f1": 0.9611829944547134,
+          "specificity": 0.9967456996745699,
+          "roc_auc_ovr": 0.9992738057667967,
+          "ap_ovr": 0.9931963712458248,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 0.9789473684210527,
+          "recall": 0.9538461538461539,
+          "f1": 0.9662337662337662,
+          "specificity": 0.9982062780269059,
+          "roc_auc_ovr": 0.9970219615959526,
+          "ap_ovr": 0.9877674209165901,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.955,
+          "recall": 0.9744897959183674,
+          "f1": 0.9646464646464646,
+          "specificity": 0.9959623149394348,
+          "roc_auc_ovr": 0.9996085917543329,
+          "ap_ovr": 0.9953246735430765,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.9773584905660377,
+          "recall": 0.9452554744525548,
+          "f1": 0.961038961038961,
+          "specificity": 0.99721059972106,
+          "roc_auc_ovr": 0.9990176017265776,
+          "ap_ovr": 0.9940546050580664,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.8951048951048951,
+          "recall": 0.9377289377289377,
+          "f1": 0.9159212880143113,
+          "specificity": 0.9860594795539034,
+          "roc_auc_ovr": 0.9955063523836758,
+          "ap_ovr": 0.9707866135711221,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.9174757281553398,
+          "recall": 0.9642857142857143,
+          "f1": 0.9402985074626866,
+          "specificity": 0.9923732615522656,
+          "roc_auc_ovr": 0.9987754186465972,
+          "ap_ovr": 0.9856313202575137,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.9428571428571428,
+          "recall": 0.9635036496350365,
+          "f1": 0.9530685920577617,
+          "specificity": 0.9925615992561599,
+          "roc_auc_ovr": 0.9989751838391242,
+          "ap_ovr": 0.9932166801518258,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9275862068965517,
+          "recall": 0.9817518248175182,
+          "f1": 0.9539007092198581,
+          "specificity": 0.9902370990237099,
+          "roc_auc_ovr": 0.9993348875247295,
+          "ap_ovr": 0.9946293452490205,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          245,
+          1,
+          2,
+          0,
+          1,
+          0,
+          22,
+          0,
+          3,
+          0
+        ],
+        [
+          4,
+          172,
+          2,
+          1,
+          3,
+          0,
+          0,
+          13,
+          0,
+          0
+        ],
+        [
+          4,
+          5,
+          260,
+          1,
+          1,
+          0,
+          0,
+          0,
+          3,
+          0
+        ],
+        [
+          1,
+          0,
+          2,
+          186,
+          4,
+          0,
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          0,
+          1,
+          191,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1,
+          0,
+          0,
+          259,
+          0,
+          0,
+          1,
+          12
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          256,
+          3,
+          6,
+          6
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          5,
+          189,
+          1,
+          0
+        ],
+        [
+          1,
+          1,
+          0,
+          0,
+          0,
+          3,
+          2,
+          0,
+          264,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0,
+          2,
+          269
+        ]
+      ],
+      "parameters": 2670436,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 36,
+        "total": 1220608,
+        "remaining": 12078,
+        "remaining_fraction": 0.009895068687080536,
+        "network_parameters": 21329700,
+        "mask_parameters": 1220608
+      },
+      "inference": {
+        "mean_ms": 2.322004440240562,
+        "std_ms": 0.671921030364423,
+        "run_mean_ms": [
+          1.9049675622954965,
+          1.899533208925277,
+          2.4868889595381916,
+          3.433514009229839,
+          1.885118461214006
+        ],
+        "timer": "time.perf_counter + torch.cuda.synchronize",
+        "warmup_iterations": 100,
+        "iterations_per_run": 100,
+        "gpu_index": 3,
+        "gpu_idle_before_loading": true,
+        "cpu_affinity": [
+          0
+        ],
+        "execution": "Triton sparse Conv/BN/LIF + compact channels, eager host, torch.no_grad()",
+        "cuda_graph": false,
+        "extra_operator_fusion": true
+      },
+      "preprocessing": {
+        "input_size": [
+          1,
+          128,
+          128
+        ],
+        "input_mode": "center_crop",
+        "mean": 0.03035951371900553,
+        "std": 0.039027507911339444
+      },
+      "inference_graph_parameters": 2670436,
+      "operations": {
+        "reference_model": "sew_resnet34_lambda1e-5/baseline",
+        "reference_dense_conv_linear_gflops_per_image": 9.287122944,
+        "reference_effective_gsops_per_image": 0.000927020698556701,
+        "reference_dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks",
+        "reference_sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs"
+      },
+      "kernel": {
+        "implementation": "inference.py active-output Triton convolution + fused BN/LIF/mask/residual; dead intermediate channel removal",
+        "time_steps": 4,
+        "batch_size": 1
+      }
+    },
+    "sew_resnet34_lambda1e-6_192_resize_full/sparse": {
+      "metrics": {
+        "accuracy": 0.9760824742268042,
+        "top3_accuracy": 0.9987628865979381,
+        "top5_accuracy": 1.0,
+        "balanced_accuracy": 0.9768831811219716,
+        "macro_precision": 0.9773542381324791,
+        "macro_recall": 0.9768831811219716,
+        "macro_f1": 0.9767870675765475,
+        "weighted_f1": 0.9759508890478803,
+        "roc_auc_macro_ovr": 0.9996088013311766,
+        "roc_auc_micro_ovr": 0.999561478962223,
+        "map_macro": 0.9975359646188536,
+        "ap_micro": 0.9971711387144683,
+        "cohen_kappa": 0.9733506789182176,
+        "mcc": 0.9734364475142875,
+        "log_loss": 0.07173895095633379,
+        "brier_multiclass": 0.035070621092613594,
+        "ece_15_bins": 0.010974162998017015
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.9809160305343512,
+          "recall": 0.9379562043795621,
+          "f1": 0.9589552238805971,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9995554605394876,
+          "ap_ovr": 0.9967623950247807,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.9947916666666666,
+          "recall": 0.9794871794871794,
+          "f1": 0.9870801033591732,
+          "specificity": 0.9995515695067264,
+          "roc_auc_ovr": 0.9999287110497872,
+          "ap_ovr": 0.9991945833046334,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.9512195121951219,
+          "recall": 0.9963503649635036,
+          "f1": 0.9732620320855615,
+          "specificity": 0.9934913993491399,
+          "roc_auc_ovr": 0.9994112397221458,
+          "ap_ovr": 0.9951612422350892,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 0.9894179894179894,
+          "recall": 0.958974358974359,
+          "f1": 0.9739583333333334,
+          "specificity": 0.9991031390134529,
+          "roc_auc_ovr": 0.9983580545015522,
+          "ap_ovr": 0.9918996968861504,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.98989898989899,
+          "recall": 1.0,
+          "f1": 0.9949238578680203,
+          "specificity": 0.9991027366532077,
+          "roc_auc_ovr": 0.9999954221257816,
+          "ap_ovr": 0.9999484642341785,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.989010989010989,
+          "recall": 0.9854014598540146,
+          "f1": 0.9872029250457038,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9998422054586731,
+          "ap_ovr": 0.9986156533963024,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.98046875,
+          "recall": 0.9194139194139194,
+          "f1": 0.9489603024574669,
+          "specificity": 0.9976765799256505,
+          "roc_auc_ovr": 0.9991353132617073,
+          "ap_ovr": 0.9951153292202567,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.9605911330049262,
+          "recall": 0.9948979591836735,
+          "f1": 0.9774436090225563,
+          "specificity": 0.9964109466128309,
+          "roc_auc_ovr": 0.9999175982640701,
+          "ap_ovr": 0.9990923224242515,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.9891304347826086,
+          "recall": 0.9963503649635036,
+          "f1": 0.9927272727272727,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9999779426985242,
+          "ap_ovr": 0.9998315802972944,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9480968858131488,
+          "recall": 1.0,
+          "f1": 0.9733570159857904,
+          "specificity": 0.99302649930265,
+          "roc_auc_ovr": 0.9999660656900372,
+          "ap_ovr": 0.9997383791655999,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          257,
+          0,
+          10,
+          2,
+          0,
+          0,
+          5,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          191,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          273,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          3,
+          187,
+          1,
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          196,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          270,
+          0,
+          0,
+          2,
+          1
+        ],
+        [
+          5,
+          0,
+          0,
+          0,
+          0,
+          2,
+          251,
+          0,
+          1,
+          14
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          195,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          273,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          274
+        ]
+      ],
+      "parameters": 12180772,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 36,
+        "total": 2746368,
+        "remaining": 77460,
+        "remaining_fraction": 0.02820452321029083,
+        "network_parameters": 21329700,
+        "mask_parameters": 2746368
+      },
+      "preprocessing": {
+        "input_size": [
+          1,
+          192,
+          192
+        ],
+        "input_mode": "resize_full",
+        "mean": 0.02972175931408394,
+        "std": 0.033701714265642675
+      },
+      "inference": {
+        "mean_ms": 2.802632771898061,
+        "std_ms": 0.4158463213235678,
+        "run_mean_ms": [
+          2.6685616211034358,
+          2.567841319832951,
+          3.531517880037427,
+          2.7287557488307357,
+          2.516487289685756
+        ],
+        "timer": "time.perf_counter + torch.cuda.synchronize",
+        "warmup_iterations": 100,
+        "iterations_per_run": 100,
+        "gpu_index": 3,
+        "gpu_idle_before_loading": true,
+        "cpu_affinity": [
+          0
+        ],
+        "execution": "Triton sparse Conv/BN/LIF + compact channels, eager host, torch.no_grad()",
+        "cuda_graph": false,
+        "extra_operator_fusion": true
+      },
+      "training": {
+        "model": "sew_resnet34",
+        "seed": 0,
+        "T": 4,
+        "penalty_lambda": 1e-06,
+        "search_epochs": 100,
+        "finetune_epochs": 20,
+        "batch_size": 64,
+        "initialization": "scratch",
+        "checkpoint_selection": "final"
+      },
+      "inference_graph_parameters": 12180772,
+      "operations": {
+        "reference_model": "sew_resnet34_lambda1e-6_192_resize_full/baseline",
+        "reference_dense_conv_linear_gflops_per_image": 20.895514624,
+        "reference_effective_gsops_per_image": 0.02200040877113402,
+        "reference_dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks",
+        "reference_sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs"
+      },
+      "kernel": {
+        "implementation": "inference.py active-output Triton convolution + fused BN/LIF/mask/residual; dead intermediate channel removal",
+        "time_steps": 4,
+        "batch_size": 1
+      }
+    },
+    "sew_resnet34_lambda3e-6_192_resize_full/sparse": {
+      "metrics": {
+        "accuracy": 0.9785567010309278,
+        "top3_accuracy": 0.9991752577319588,
+        "top5_accuracy": 0.9995876288659794,
+        "balanced_accuracy": 0.9783562318807366,
+        "macro_precision": 0.9780910760559509,
+        "macro_recall": 0.9783562318807366,
+        "macro_f1": 0.9780739164686173,
+        "weighted_f1": 0.9785464788417598,
+        "roc_auc_macro_ovr": 0.9993402607747374,
+        "roc_auc_micro_ovr": 0.9994085095830233,
+        "map_macro": 0.9953906034450141,
+        "ap_micro": 0.9956007317467117,
+        "cohen_kappa": 0.9761089899919214,
+        "mcc": 0.9761387656891996,
+        "log_loss": 0.07067228468340216,
+        "brier_multiclass": 0.03302481831634535,
+        "ece_15_bins": 0.004366627642281674
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.981549815498155,
+          "recall": 0.9708029197080292,
+          "f1": 0.9761467889908257,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9998235415881935,
+          "ap_ovr": 0.9986507393376437,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.9841269841269841,
+          "recall": 0.9538461538461539,
+          "f1": 0.96875,
+          "specificity": 0.9986547085201793,
+          "roc_auc_ovr": 0.9990180522019086,
+          "ap_ovr": 0.9923200492678966,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.981549815498155,
+          "recall": 0.9708029197080292,
+          "f1": 0.9761467889908257,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9993043466457632,
+          "ap_ovr": 0.9793353762548688,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 0.9595959595959596,
+          "recall": 0.9743589743589743,
+          "f1": 0.9669211195928753,
+          "specificity": 0.9964125560538116,
+          "roc_auc_ovr": 0.9962446820742784,
+          "ap_ovr": 0.9912864927285681,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.9948186528497409,
+          "recall": 0.9795918367346939,
+          "f1": 0.987146529562982,
+          "specificity": 0.9995513683266039,
+          "roc_auc_ovr": 0.999958799132035,
+          "ap_ovr": 0.9995380328077036,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.989010989010989,
+          "recall": 0.9854014598540146,
+          "f1": 0.9872029250457038,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9997030747878257,
+          "ap_ovr": 0.9981502993072784,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.9849624060150376,
+          "recall": 0.9597069597069597,
+          "f1": 0.9721706864564007,
+          "specificity": 0.9981412639405205,
+          "roc_auc_ovr": 0.9995829758840911,
+          "ap_ovr": 0.9970359513544851,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.9514563106796117,
+          "recall": 1.0,
+          "f1": 0.9751243781094527,
+          "specificity": 0.9955136832660386,
+          "roc_auc_ovr": 0.9998672416476685,
+          "ap_ovr": 0.9983721119515612,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.9890510948905109,
+          "recall": 0.9890510948905109,
+          "f1": 0.9890510948905109,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9999440083885615,
+          "ap_ovr": 0.9995657826883981,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9647887323943662,
+          "recall": 1.0,
+          "f1": 0.982078853046595,
+          "specificity": 0.9953509995351,
+          "roc_auc_ovr": 0.9999558853970484,
+          "ap_ovr": 0.9996511987517362,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          266,
+          0,
+          2,
+          2,
+          0,
+          0,
+          3,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          186,
+          0,
+          1,
+          1,
+          0,
+          0,
+          7,
+          0,
+          0
+        ],
+        [
+          2,
+          2,
+          266,
+          2,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          3,
+          190,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          3,
+          192,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          270,
+          1,
+          0,
+          2,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          262,
+          0,
+          0,
+          9
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          196,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0,
+          271,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          274
+        ]
+      ],
+      "parameters": 7765156,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 36,
+        "total": 2746368,
+        "remaining": 30930,
+        "remaining_fraction": 0.011262146951901565,
+        "network_parameters": 21329700,
+        "mask_parameters": 2746368
+      },
+      "preprocessing": {
+        "input_size": [
+          1,
+          192,
+          192
+        ],
+        "input_mode": "resize_full",
+        "mean": 0.02972175931408394,
+        "std": 0.033701714265642675
+      },
+      "inference": {
+        "mean_ms": 2.5156595478765666,
+        "std_ms": 0.01299672581225354,
+        "run_mean_ms": [
+          2.5362586393021047,
+          2.5123234116472304,
+          2.5022918707691133,
+          2.5085193291306496,
+          2.5189044885337353
+        ],
+        "timer": "time.perf_counter + torch.cuda.synchronize",
+        "warmup_iterations": 100,
+        "iterations_per_run": 100,
+        "gpu_index": 3,
+        "gpu_idle_before_loading": true,
+        "cpu_affinity": [
+          0
+        ],
+        "execution": "Triton sparse Conv/BN/LIF + compact channels, eager host, torch.no_grad()",
+        "cuda_graph": false,
+        "extra_operator_fusion": true
+      },
+      "training": {
+        "model": "sew_resnet34",
+        "seed": 0,
+        "T": 4,
+        "penalty_lambda": 3e-06,
+        "search_epochs": 100,
+        "finetune_epochs": 20,
+        "batch_size": 64,
+        "initialization": "scratch",
+        "checkpoint_selection": "final"
+      },
+      "inference_graph_parameters": 7765156,
+      "operations": {
+        "reference_model": "sew_resnet34_lambda3e-6_192_resize_full/baseline",
+        "reference_dense_conv_linear_gflops_per_image": 20.895514624,
+        "reference_effective_gsops_per_image": 0.005286010490309278,
+        "reference_dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks",
+        "reference_sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs"
+      },
+      "kernel": {
+        "implementation": "inference.py active-output Triton convolution + fused BN/LIF/mask/residual; dead intermediate channel removal",
+        "time_steps": 4,
+        "batch_size": 1
+      }
+    },
+    "sew_resnet18_lambda6e-6_192_resize_full/sparse": {
+      "metrics": {
+        "accuracy": 0.9703092783505155,
+        "top3_accuracy": 0.9991752577319588,
+        "top5_accuracy": 0.9991752577319588,
+        "balanced_accuracy": 0.9713340743372025,
+        "macro_precision": 0.9708166357382695,
+        "macro_recall": 0.9713340743372025,
+        "macro_f1": 0.9708436351519538,
+        "weighted_f1": 0.9702232664771586,
+        "roc_auc_macro_ovr": 0.9996004035680007,
+        "roc_auc_micro_ovr": 0.999466572194471,
+        "map_macro": 0.9968842817212529,
+        "ap_micro": 0.9960677330148412,
+        "cohen_kappa": 0.9669210549947881,
+        "mcc": 0.9669798623895676,
+        "log_loss": 0.09599415692487448,
+        "brier_multiclass": 0.04421670551975886,
+        "ece_15_bins": 0.01705786212526436
+      },
+      "per_class": [
+        {
+          "support": 274,
+          "precision": 0.9664179104477612,
+          "recall": 0.9452554744525548,
+          "f1": 0.955719557195572,
+          "specificity": 0.99581589958159,
+          "roc_auc_ovr": 0.9993501579642129,
+          "ap_ovr": 0.995412072926671,
+          "class": "2S1"
+        },
+        {
+          "support": 195,
+          "precision": 0.9690721649484536,
+          "recall": 0.9641025641025641,
+          "f1": 0.9665809768637532,
+          "specificity": 0.9973094170403587,
+          "roc_auc_ovr": 0.999500977348511,
+          "ap_ovr": 0.9948869916388847,
+          "class": "BMP2"
+        },
+        {
+          "support": 274,
+          "precision": 0.9708029197080292,
+          "recall": 0.9708029197080292,
+          "f1": 0.9708029197080292,
+          "specificity": 0.9962807996280799,
+          "roc_auc_ovr": 0.9994078462911496,
+          "ap_ovr": 0.9958386399439204,
+          "class": "BRDM2"
+        },
+        {
+          "support": 195,
+          "precision": 0.9842931937172775,
+          "recall": 0.9641025641025641,
+          "f1": 0.9740932642487047,
+          "specificity": 0.9986547085201793,
+          "roc_auc_ovr": 0.9996941474071519,
+          "ap_ovr": 0.9967035241215307,
+          "class": "BTR60"
+        },
+        {
+          "support": 196,
+          "precision": 0.9748743718592965,
+          "recall": 0.9897959183673469,
+          "f1": 0.9822784810126582,
+          "specificity": 0.9977568416330193,
+          "roc_auc_ovr": 0.9998763973961051,
+          "ap_ovr": 0.9985721011400615,
+          "class": "BTR70"
+        },
+        {
+          "support": 274,
+          "precision": 0.978021978021978,
+          "recall": 0.9744525547445255,
+          "f1": 0.9762340036563071,
+          "specificity": 0.99721059972106,
+          "roc_auc_ovr": 0.9991855765608935,
+          "ap_ovr": 0.9955742790427635,
+          "class": "D7"
+        },
+        {
+          "support": 273,
+          "precision": 0.9767441860465116,
+          "recall": 0.9230769230769231,
+          "f1": 0.9491525423728814,
+          "specificity": 0.9972118959107806,
+          "roc_auc_ovr": 0.9993412721107888,
+          "ap_ovr": 0.9949572582161943,
+          "class": "T62"
+        },
+        {
+          "support": 196,
+          "precision": 0.9607843137254902,
+          "recall": 1.0,
+          "f1": 0.98,
+          "specificity": 0.9964109466128309,
+          "roc_auc_ovr": 0.999903864641415,
+          "ap_ovr": 0.9989016863787765,
+          "class": "T72"
+        },
+        {
+          "support": 274,
+          "precision": 0.989010989010989,
+          "recall": 0.9854014598540146,
+          "f1": 0.9872029250457038,
+          "specificity": 0.99860529986053,
+          "roc_auc_ovr": 0.9999355248110707,
+          "ap_ovr": 0.9995169024505657,
+          "class": "ZIL131"
+        },
+        {
+          "support": 274,
+          "precision": 0.9381443298969072,
+          "recall": 0.9963503649635036,
+          "f1": 0.9663716814159292,
+          "specificity": 0.9916317991631799,
+          "roc_auc_ovr": 0.9998082711487104,
+          "ap_ovr": 0.9984793613531604,
+          "class": "ZSU234"
+        }
+      ],
+      "confusion_matrix": [
+        [
+          259,
+          2,
+          5,
+          0,
+          0,
+          0,
+          4,
+          0,
+          1,
+          3
+        ],
+        [
+          0,
+          188,
+          0,
+          1,
+          1,
+          0,
+          0,
+          5,
+          0,
+          0
+        ],
+        [
+          1,
+          2,
+          266,
+          1,
+          2,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          3,
+          188,
+          2,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          1,
+          194,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          267,
+          1,
+          0,
+          1,
+          3
+        ],
+        [
+          6,
+          0,
+          0,
+          0,
+          0,
+          2,
+          252,
+          0,
+          1,
+          12
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          196,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          1,
+          0,
+          270,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          273
+        ]
+      ],
+      "parameters": 3177316,
+      "neurons": {
+        "type": "LIF",
+        "activation_sites": 20,
+        "total": 1824768,
+        "remaining": 16847,
+        "remaining_fraction": 0.009232406530583614,
+        "network_parameters": 11221540,
+        "mask_parameters": 1824768
+      },
+      "preprocessing": {
+        "input_size": [
+          1,
+          192,
+          192
+        ],
+        "input_mode": "resize_full",
+        "mean": 0.02972175931408394,
+        "std": 0.033701714265642675
+      },
+      "inference": {
+        "mean_ms": 1.5734756258316338,
+        "std_ms": 0.08793104408778417,
+        "run_mean_ms": [
+          1.5242375899106264,
+          1.501813109498471,
+          1.510699219070375,
+          1.6295504104346037,
+          1.701077800244093
+        ],
+        "timer": "time.perf_counter + torch.cuda.synchronize",
+        "warmup_iterations": 100,
+        "iterations_per_run": 100,
+        "gpu_index": 3,
+        "gpu_idle_before_loading": true,
+        "cpu_affinity": [
+          0
+        ],
+        "execution": "Triton sparse Conv/BN/LIF + compact channels, eager host, torch.no_grad()",
+        "cuda_graph": false,
+        "extra_operator_fusion": true
+      },
+      "training": {
+        "model": "sew_resnet18",
+        "seed": 0,
+        "T": 4,
+        "penalty_lambda": 6e-06,
+        "search_epochs": 100,
+        "finetune_epochs": 20,
+        "batch_size": 64,
+        "initialization": "scratch",
+        "checkpoint_selection": "final",
+        "gpu_index": 2
+      },
+      "inference_graph_parameters": 3177316,
+      "operations": {
+        "reference_model": "sew_resnet18_lambda6e-6_192_resize_full/baseline",
+        "reference_effective_gsops_per_image": 0.0013551101777319588,
+        "reference_sop_definition": "Upstream spike-weighted convolution operation estimate over the test set, T=4, batch size 64; excludes static stem and classifier; not actual dense GPU FLOPs",
+        "reference_dense_conv_linear_gflops_per_image": 10.023878656,
+        "reference_dense_flop_definition": "2 FLOPs per Conv/Linear MAC; full T=4; static stem once; excludes BN/LIF/masks"
+      },
+      "kernel": {
+        "implementation": "inference.py active-output Triton convolution + fused BN/LIF/mask/residual; dead intermediate channel removal",
+        "time_steps": 4,
+        "batch_size": 1
       }
     }
   },
@@ -4305,5 +7380,19 @@
     "sew_finetune_epochs": 20,
     "T": 4,
     "target_remaining_fraction": 0.01
+  },
+  "latest_timing_protocol": {
+    "execution": "PyTorch eager, model.eval(), torch.no_grad()",
+    "dtype": "float32",
+    "batch_size": 1,
+    "gpu_index": 3,
+    "warmup_iterations": 100,
+    "runs": 5,
+    "iterations_per_run": 100,
+    "timer": "time.perf_counter + torch.cuda.synchronize",
+    "cpu_affinity": [
+      0
+    ],
+    "scope": "ANN-34 and four paired SEW baseline/sparse cases; older unrelated records retain their recorded timer."
   }
 }
