@@ -38,4 +38,4 @@ CUDA_VISIBLE_DEVICES=0 python pruning/main.py --test-only \
 
 新 SEW 和剪枝 checkpoint 使用上游 `config`、`mstar_metadata`、`model` 格式；原 ANN/post-add SNN 权重仍使用根目录 `evaluate.py`，两种结构分别加载。
 
-本机结果（最终模型，2425 张 SOC 测试图）：未剪枝 **97.9794%**，剪枝 **95.8763%**。剪枝后保留 11,970 / 811,008 个空间 LIF 单元，准确率比这组未剪枝配方低 2.1031 个百分点。分类指标、参数统计、混淆矩阵和 batch=1 延迟见 [完整结果](../results/analysis/metrics.json)。新增 SEW checkpoint 暂留本机，后续可单独打包分发。
+当前推理指标和时间见 [results/metrics.json](../results/metrics.json)。新增 SEW checkpoint 暂留本机。

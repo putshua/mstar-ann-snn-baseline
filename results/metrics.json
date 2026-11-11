@@ -1,61 +1,529 @@
 {
-  "weights_source": "mstar_checkpoints.zip",
-  "weight_groups": {
-    "sew_dense": "logs/sew_resnet18_mstar_dense/checkpoint_final.pth",
-    "pruned_5e-6": "logs/sew_resnet18_mstar_5e-6/checkpoint_final.pth",
-    "pruned_1e-5": "logs/sew_resnet18_mstar_1e-5/checkpoint_final.pth",
-    "pruned_2e-5": "logs/sew_resnet18_mstar_2e-5/checkpoint_final.pth"
-  },
-  "environment": {
-    "gpu": "NVIDIA L20Z",
-    "torch": "2.9.0+cu130",
-    "triton": "3.5.0",
-    "spikingjelly": "0.0.0.0.14",
-    "cpu_threads": 1,
-    "cpu_affinity": [
-      37
-    ],
-    "cudnn_deterministic": true,
-    "cudnn_benchmark": false,
-    "tf32_cudnn": true,
-    "tf32_matmul": false
-  },
-  "protocol": {
-    "dtype": "float32",
-    "classification_batch_size": 1,
-    "latency_batch_size": 1,
-    "T": 4,
-    "timing": "Synchronized wall clock, full forward plus temporal readout and state reset. Excludes IO, preprocessing and H2D.",
-    "order": "Seed-0 shuffled model order per image; all models interleaved.",
-    "equations": "v += (x-v)/tau, threshold >= 1, hard reset 0, initial v=0 per image.",
-    "runtime_storage": "Stored parameter/buffer elements in the inference graph; distinct from trained parameter count.",
-    "dataset": "MSTAR SOC",
-    "n_test": 2425,
-    "input": [
-      1,
-      128,
-      128
-    ]
-  },
+  "gpu": "NVIDIA L20Z",
+  "dtype": "float32",
+  "batch_size": 1,
+  "snn_time_steps": 4,
+  "test_images": 2425,
+  "runs": 5,
   "models": {
-    "sew_dense/baseline": {
-      "model": "sew_dense/baseline",
-      "n": 2425,
-      "correct": 2379,
-      "errors": 46,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
+    "ann/baseline": {
+      "metrics": {
+        "accuracy": 0.9892783505154639,
+        "top3_accuracy": 0.9995876288659794,
+        "balanced_accuracy": 0.9884474632076301,
+        "macro_precision": 0.9898022970580849,
+        "macro_recall": 0.9884474632076301,
+        "macro_f1": 0.9890437571420515,
+        "weighted_f1": 0.9892915218748124,
+        "roc_auc_macro_ovr": 0.9999616370568744,
+        "roc_auc_micro_ovr": 0.9999489472254697,
+        "map_macro": 0.9996593581085026,
+        "ap_micro": 0.9995591900301362,
+        "cohen_kappa": 0.9880523785241456,
+        "mcc": 0.9880690515573193,
+        "log_loss": 0.0290075949096855,
+        "brier_multiclass": 0.014970359169394822,
+        "ece_15_bins": 0.0030793672130388474,
+        "top5_accuracy": 1.0
+      },
+      "per_class": [
+        {
+          "class": "2S1",
+          "support": 274,
+          "precision": 0.996309963099631,
+          "recall": 0.9854014598540146,
+          "f1": 0.9908256880733946,
+          "specificity": 0.99953509995351,
+          "roc_auc_ovr": 0.9999830328450185,
+          "ap_ovr": 0.9998656081735109
+        },
+        {
+          "class": "BMP2",
+          "support": 195,
+          "precision": 1.0,
+          "recall": 0.9794871794871794,
+          "f1": 0.9896373056994818,
+          "specificity": 1.0,
+          "roc_auc_ovr": 0.9999931010693343,
+          "ap_ovr": 0.9999216385159376
+        },
+        {
+          "class": "BRDM2",
+          "support": 274,
+          "precision": 1.0,
+          "recall": 0.9927007299270073,
+          "f1": 0.9963369963369964,
+          "specificity": 1.0,
+          "roc_auc_ovr": 1.0,
+          "ap_ovr": 1.0
+        },
+        {
+          "class": "BTR60",
+          "support": 195,
+          "precision": 1.0,
+          "recall": 0.9641025641025641,
+          "f1": 0.9817232375979112,
+          "specificity": 1.0,
+          "roc_auc_ovr": 0.9999563067724503,
+          "ap_ovr": 0.9995159303305394
+        },
+        {
+          "class": "BTR70",
+          "support": 196,
+          "precision": 0.9949238578680203,
+          "recall": 1.0,
+          "f1": 0.9974554707379135,
+          "specificity": 0.9995513683266039,
+          "roc_auc_ovr": 1.0,
+          "ap_ovr": 1.0
+        },
+        {
+          "class": "D7",
+          "support": 274,
+          "precision": 0.9963369963369964,
+          "recall": 0.9927007299270073,
+          "f1": 0.9945155393053017,
+          "specificity": 0.99953509995351,
+          "roc_auc_ovr": 0.9999541886815502,
+          "ap_ovr": 0.9996659634232138
+        },
+        {
+          "class": "T62",
+          "support": 273,
+          "precision": 0.9890909090909091,
+          "recall": 0.9963369963369964,
+          "f1": 0.9927007299270073,
+          "specificity": 0.9986059479553904,
+          "roc_auc_ovr": 0.9999540422402876,
+          "ap_ovr": 0.9996301563738084
+        },
+        {
+          "class": "T72",
+          "support": 196,
+          "precision": 0.9747474747474747,
+          "recall": 0.9846938775510204,
+          "f1": 0.9796954314720813,
+          "specificity": 0.9977568416330193,
+          "roc_auc_ovr": 0.999874108458996,
+          "ap_ovr": 0.9987464633007234
+        },
+        {
+          "class": "ZIL131",
+          "support": 274,
+          "precision": 0.9646643109540636,
+          "recall": 0.9963503649635036,
+          "f1": 0.9802513464991023,
+          "specificity": 0.9953509995351,
+          "roc_auc_ovr": 0.9999643689745391,
+          "ap_ovr": 0.9997271864059198
+        },
+        {
+          "class": "ZSU234",
+          "support": 274,
+          "precision": 0.9819494584837545,
+          "recall": 0.9927007299270073,
+          "f1": 0.9872958257713249,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9999372215265688,
+          "ap_ovr": 0.999520634561372
+        }
       ],
-      "summary": {
+      "confusion_matrix": [
+        [
+          270,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          3,
+          0
+        ],
+        [
+          1,
+          191,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          272,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          188,
+          0,
+          0,
+          0,
+          2,
+          2,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          196,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          272,
+          1,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          272,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          193,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          273,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          272
+        ]
+      ],
+      "parameters": 11175370,
+      "inference": {
+        "mean_ms": 1.49979691234375,
+        "run_mean_ms": [
+          1.47389875390625,
+          1.46998975234375,
+          1.4489131578125,
+          1.5962193875,
+          1.50996351015625
+        ],
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
+      }
+    },
+    "ann/fold_bn": {
+      "metrics": {
+        "accuracy": 0.9892783505154639,
+        "top3_accuracy": 0.9995876288659794,
+        "balanced_accuracy": 0.9884474632076301,
+        "macro_precision": 0.9898022970580849,
+        "macro_recall": 0.9884474632076301,
+        "macro_f1": 0.9890437571420515,
+        "weighted_f1": 0.9892915218748124,
+        "roc_auc_macro_ovr": 0.9999616370568744,
+        "roc_auc_micro_ovr": 0.9999489661199088,
+        "map_macro": 0.9996593581085026,
+        "ap_micro": 0.9995593216682241,
+        "cohen_kappa": 0.9880523785241456,
+        "mcc": 0.9880690515573193,
+        "log_loss": 0.02901377963611628,
+        "brier_multiclass": 0.01497363622487211,
+        "ece_15_bins": 0.0030791626136231695,
+        "top5_accuracy": 1.0
+      },
+      "per_class": [
+        {
+          "class": "2S1",
+          "support": 274,
+          "precision": 0.996309963099631,
+          "recall": 0.9854014598540146,
+          "f1": 0.9908256880733946,
+          "specificity": 0.99953509995351,
+          "roc_auc_ovr": 0.9999830328450185,
+          "ap_ovr": 0.9998656081735109
+        },
+        {
+          "class": "BMP2",
+          "support": 195,
+          "precision": 1.0,
+          "recall": 0.9794871794871794,
+          "f1": 0.9896373056994818,
+          "specificity": 1.0,
+          "roc_auc_ovr": 0.9999931010693343,
+          "ap_ovr": 0.9999216385159376
+        },
+        {
+          "class": "BRDM2",
+          "support": 274,
+          "precision": 1.0,
+          "recall": 0.9927007299270073,
+          "f1": 0.9963369963369964,
+          "specificity": 1.0,
+          "roc_auc_ovr": 1.0,
+          "ap_ovr": 1.0
+        },
+        {
+          "class": "BTR60",
+          "support": 195,
+          "precision": 1.0,
+          "recall": 0.9641025641025641,
+          "f1": 0.9817232375979112,
+          "specificity": 1.0,
+          "roc_auc_ovr": 0.9999563067724503,
+          "ap_ovr": 0.9995159303305394
+        },
+        {
+          "class": "BTR70",
+          "support": 196,
+          "precision": 0.9949238578680203,
+          "recall": 1.0,
+          "f1": 0.9974554707379135,
+          "specificity": 0.9995513683266039,
+          "roc_auc_ovr": 1.0,
+          "ap_ovr": 1.0
+        },
+        {
+          "class": "D7",
+          "support": 274,
+          "precision": 0.9963369963369964,
+          "recall": 0.9927007299270073,
+          "f1": 0.9945155393053017,
+          "specificity": 0.99953509995351,
+          "roc_auc_ovr": 0.9999541886815502,
+          "ap_ovr": 0.9996659634232138
+        },
+        {
+          "class": "T62",
+          "support": 273,
+          "precision": 0.9890909090909091,
+          "recall": 0.9963369963369964,
+          "f1": 0.9927007299270073,
+          "specificity": 0.9986059479553904,
+          "roc_auc_ovr": 0.9999540422402876,
+          "ap_ovr": 0.9996301563738084
+        },
+        {
+          "class": "T72",
+          "support": 196,
+          "precision": 0.9747474747474747,
+          "recall": 0.9846938775510204,
+          "f1": 0.9796954314720813,
+          "specificity": 0.9977568416330193,
+          "roc_auc_ovr": 0.999874108458996,
+          "ap_ovr": 0.9987464633007234
+        },
+        {
+          "class": "ZIL131",
+          "support": 274,
+          "precision": 0.9646643109540636,
+          "recall": 0.9963503649635036,
+          "f1": 0.9802513464991023,
+          "specificity": 0.9953509995351,
+          "roc_auc_ovr": 0.9999643689745391,
+          "ap_ovr": 0.9997271864059198
+        },
+        {
+          "class": "ZSU234",
+          "support": 274,
+          "precision": 0.9819494584837545,
+          "recall": 0.9927007299270073,
+          "f1": 0.9872958257713249,
+          "specificity": 0.99767549976755,
+          "roc_auc_ovr": 0.9999372215265688,
+          "ap_ovr": 0.999520634561372
+        }
+      ],
+      "confusion_matrix": [
+        [
+          270,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          3,
+          0
+        ],
+        [
+          1,
+          191,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          272,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          188,
+          0,
+          0,
+          0,
+          2,
+          2,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          196,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          272,
+          1,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          272,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          193,
+          1,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          273,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          272
+        ]
+      ],
+      "parameters": 11170570,
+      "inference": {
+        "mean_ms": 1.0436366106250001,
+        "run_mean_ms": [
+          1.02449493046875,
+          1.0215706960937498,
+          1.0080488265625,
+          1.103558,
+          1.0605106
+        ],
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
+      }
+    },
+    "sew_dense/baseline": {
+      "metrics": {
         "accuracy": 0.9810309278350515,
         "top3_accuracy": 1.0,
         "balanced_accuracy": 0.9795269416020199,
@@ -298,92 +766,22 @@
           271
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 10
-        },
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 6
-        },
-        {
-          "true": "ZSU234",
-          "predicted": "ZIL131",
-          "count": 3
-        },
-        {
-          "true": "2S1",
-          "predicted": "BTR70",
-          "count": 2
-        },
-        {
-          "true": "2S1",
-          "predicted": "ZIL131",
-          "count": 2
-        }
-      ],
-      "checkpoint_group": "sew_dense",
-      "variant": "baseline",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 0,
-        "T": 4,
-        "penalty_lmbda": 1e-11,
-        "not_prune_neuron": true,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 11221540,
-        "buffer_elements": 9620,
-        "model_tensor_bytes": 44924720
-      },
-      "latency_bs1": {
-        "mean_ms": 5.787875896930927,
-        "median_ms": 5.743762478232384,
-        "p95_ms": 5.894416675437242,
-        "std_ms": 0.3690007241744873,
-        "cuda_event_mean_ms": 5.75733549632132,
-        "trial_mean_ms": [
-          5.840196144163201,
-          5.800910414109239,
-          5.727674031732022,
-          5.794886662442877,
-          5.775712232207297
+      "parameters": 11221540,
+      "inference": {
+        "mean_ms": 5.8518098803125,
+        "run_mean_ms": [
+          5.742459109375,
+          5.71393665234375,
+          5.704843827343749,
+          6.191333090624999,
+          5.906476721875
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 1.0
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "sew_dense/bn_lif": {
-      "model": "sew_dense/bn_lif",
-      "n": 2425,
-      "correct": 2379,
-      "errors": 46,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.9810309278350515,
         "top3_accuracy": 1.0,
         "balanced_accuracy": 0.9795269416020199,
@@ -626,92 +1024,22 @@
           271
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 10
-        },
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 6
-        },
-        {
-          "true": "ZSU234",
-          "predicted": "ZIL131",
-          "count": 3
-        },
-        {
-          "true": "2S1",
-          "predicted": "BTR70",
-          "count": 2
-        },
-        {
-          "true": "2S1",
-          "predicted": "ZIL131",
-          "count": 2
-        }
-      ],
-      "checkpoint_group": "sew_dense",
-      "variant": "bn_lif",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 0,
-        "T": 4,
-        "penalty_lmbda": 1e-11,
-        "not_prune_neuron": true,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 11211940,
-        "buffer_elements": 9600,
-        "model_tensor_bytes": 44886160
-      },
-      "latency_bs1": {
-        "mean_ms": 1.8393627309706062,
-        "median_ms": 1.8179380567744374,
-        "p95_ms": 1.9344259984791279,
-        "std_ms": 0.08762541891912595,
-        "cuda_event_mean_ms": 1.8132826518267393,
-        "trial_mean_ms": [
-          1.8432125662002363,
-          1.8496606953704031,
-          1.835112720982579,
-          1.8368060600550962,
-          1.8320216122447164
+      "parameters": 11211940,
+      "inference": {
+        "mean_ms": 1.9113337253125,
+        "run_mean_ms": [
+          1.8796246851562501,
+          1.8582482125,
+          1.87007250546875,
+          2.0504203078125,
+          1.8983029156249998
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 3.146674551721914
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "pruned_5e-6/baseline": {
-      "model": "pruned_5e-6/baseline",
-      "n": 2425,
-      "correct": 2336,
-      "errors": 89,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.963298969072165,
         "top3_accuracy": 0.9954639175257732,
         "balanced_accuracy": 0.9624933252357654,
@@ -954,92 +1282,22 @@
           271
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 11
-        },
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 10
-        },
-        {
-          "true": "2S1",
-          "predicted": "BTR70",
-          "count": 8
-        },
-        {
-          "true": "T62",
-          "predicted": "ZSU234",
-          "count": 6
-        },
-        {
-          "true": "BRDM2",
-          "predicted": "BMP2",
-          "count": 5
-        }
-      ],
-      "checkpoint_group": "pruned_5e-6",
-      "variant": "baseline",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 20,
-        "T": 4,
-        "penalty_lmbda": 5e-06,
-        "not_prune_neuron": false,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.0001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 12032548,
-        "buffer_elements": 9620,
-        "model_tensor_bytes": 48168752
-      },
-      "latency_bs1": {
-        "mean_ms": 6.527597248714301,
-        "median_ms": 6.485359510406852,
-        "p95_ms": 6.675491505302489,
-        "std_ms": 0.3633215165622238,
-        "cuda_event_mean_ms": 6.496584746986628,
-        "trial_mean_ms": [
-          6.569682414919953,
-          6.542295596773329,
-          6.471145630712272,
-          6.547660907926911,
-          6.50720169323904
+      "parameters": 12032548,
+      "inference": {
+        "mean_ms": 6.582395787187499,
+        "run_mean_ms": [
+          6.4640569945312505,
+          6.448996401562499,
+          6.398429377343751,
+          6.939814070312501,
+          6.6606820921875
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 1.0
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "pruned_5e-6/bn_lif": {
-      "model": "pruned_5e-6/bn_lif",
-      "n": 2425,
-      "correct": 2336,
-      "errors": 89,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.963298969072165,
         "top3_accuracy": 0.9954639175257732,
         "balanced_accuracy": 0.9624933252357654,
@@ -1282,92 +1540,22 @@
           271
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 11
-        },
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 10
-        },
-        {
-          "true": "2S1",
-          "predicted": "BTR70",
-          "count": 8
-        },
-        {
-          "true": "T62",
-          "predicted": "ZSU234",
-          "count": 6
-        },
-        {
-          "true": "BRDM2",
-          "predicted": "BMP2",
-          "count": 5
-        }
-      ],
-      "checkpoint_group": "pruned_5e-6",
-      "variant": "bn_lif",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 20,
-        "T": 4,
-        "penalty_lmbda": 5e-06,
-        "not_prune_neuron": false,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.0001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 11211940,
-        "buffer_elements": 820608,
-        "model_tensor_bytes": 45697168
-      },
-      "latency_bs1": {
-        "mean_ms": 1.8352195642364677,
-        "median_ms": 1.811726950109005,
-        "p95_ms": 1.930161309428513,
-        "std_ms": 0.1016225228379017,
-        "cuda_event_mean_ms": 1.8090830498375,
-        "trial_mean_ms": [
-          1.8373875245742965,
-          1.837281180996797,
-          1.821865886086016,
-          1.8444490524416324,
-          1.8351141770835966
+      "parameters": 11211940,
+      "inference": {
+        "mean_ms": 1.9147198120312499,
+        "run_mean_ms": [
+          1.8967103375,
+          1.86536265390625,
+          1.87823853203125,
+          2.03360630703125,
+          1.8996812296874999
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 3.5568481155714298
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "pruned_5e-6/sparse": {
-      "model": "pruned_5e-6/sparse",
-      "n": 2425,
-      "correct": 2334,
-      "errors": 91,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.9624742268041238,
         "top3_accuracy": 0.9958762886597938,
         "balanced_accuracy": 0.9616142043566442,
@@ -1610,92 +1798,22 @@
           272
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 11
-        },
-        {
-          "true": "2S1",
-          "predicted": "BTR70",
-          "count": 8
-        },
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 8
-        },
-        {
-          "true": "T62",
-          "predicted": "ZSU234",
-          "count": 8
-        },
-        {
-          "true": "BTR70",
-          "predicted": "2S1",
-          "count": 6
-        }
-      ],
-      "checkpoint_group": "pruned_5e-6",
-      "variant": "sparse",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 20,
-        "T": 4,
-        "penalty_lmbda": 5e-06,
-        "not_prune_neuron": false,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.0001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 4634596,
-        "buffer_elements": 780235,
-        "model_tensor_bytes": 19408508
-      },
-      "latency_bs1": {
-        "mean_ms": 1.5899268873909023,
-        "median_ms": 1.5790144680067897,
-        "p95_ms": 1.6431308817118406,
-        "std_ms": 0.13922224011605897,
-        "cuda_event_mean_ms": 1.5709060509689152,
-        "trial_mean_ms": [
-          1.5884166286923573,
-          1.5994015711839893,
-          1.5763118290124112,
-          1.597993538780429,
-          1.5875108692853246
+      "parameters": 4634596,
+      "inference": {
+        "mean_ms": 1.6698892935937502,
+        "run_mean_ms": [
+          1.643871428125,
+          1.6249358999999999,
+          1.6307377499999998,
+          1.7823031679687502,
+          1.667598221875
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 4.105595861345676
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "pruned_1e-5/baseline": {
-      "model": "pruned_1e-5/baseline",
-      "n": 2425,
-      "correct": 2312,
-      "errors": 113,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.9534020618556701,
         "top3_accuracy": 0.9946391752577319,
         "balanced_accuracy": 0.9525643126425191,
@@ -1938,92 +2056,22 @@
           267
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 15
-        },
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 10
-        },
-        {
-          "true": "2S1",
-          "predicted": "ZIL131",
-          "count": 6
-        },
-        {
-          "true": "T62",
-          "predicted": "ZSU234",
-          "count": 6
-        },
-        {
-          "true": "T72",
-          "predicted": "T62",
-          "count": 6
-        }
-      ],
-      "checkpoint_group": "pruned_1e-5",
-      "variant": "baseline",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 20,
-        "T": 4,
-        "penalty_lmbda": 1e-05,
-        "not_prune_neuron": false,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.0001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 12032548,
-        "buffer_elements": 9620,
-        "model_tensor_bytes": 48168752
-      },
-      "latency_bs1": {
-        "mean_ms": 6.560597804309509,
-        "median_ms": 6.498201517388225,
-        "p95_ms": 6.716490362305192,
-        "std_ms": 0.6084955362051949,
-        "cuda_event_mean_ms": 6.5295568238943815,
-        "trial_mean_ms": [
-          6.572000636879238,
-          6.556587339218822,
-          6.497997899714392,
-          6.631721247686073,
-          6.544681898049021
+      "parameters": 12032548,
+      "inference": {
+        "mean_ms": 6.595391342656251,
+        "run_mean_ms": [
+          6.467452086718751,
+          6.438812150000001,
+          6.41694994921875,
+          6.953145974218751,
+          6.700596553125
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 1.0
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "pruned_1e-5/bn_lif": {
-      "model": "pruned_1e-5/bn_lif",
-      "n": 2425,
-      "correct": 2312,
-      "errors": 113,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.9534020618556701,
         "top3_accuracy": 0.9946391752577319,
         "balanced_accuracy": 0.9525643126425191,
@@ -2266,92 +2314,22 @@
           267
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 15
-        },
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 10
-        },
-        {
-          "true": "2S1",
-          "predicted": "ZIL131",
-          "count": 6
-        },
-        {
-          "true": "T62",
-          "predicted": "ZSU234",
-          "count": 6
-        },
-        {
-          "true": "T72",
-          "predicted": "T62",
-          "count": 6
-        }
-      ],
-      "checkpoint_group": "pruned_1e-5",
-      "variant": "bn_lif",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 20,
-        "T": 4,
-        "penalty_lmbda": 1e-05,
-        "not_prune_neuron": false,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.0001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 11211940,
-        "buffer_elements": 820608,
-        "model_tensor_bytes": 45697168
-      },
-      "latency_bs1": {
-        "mean_ms": 1.8362985256317188,
-        "median_ms": 1.8143031047657132,
-        "p95_ms": 1.9329048111103475,
-        "std_ms": 0.0876059374429489,
-        "cuda_event_mean_ms": 1.8104392492212356,
-        "trial_mean_ms": [
-          1.836250544329232,
-          1.8453623915775097,
-          1.8266089264216134,
-          1.829733892918739,
-          1.8435368729114998
+      "parameters": 11211940,
+      "inference": {
+        "mean_ms": 1.919538829375,
+        "run_mean_ms": [
+          1.89344379765625,
+          1.8802590453124999,
+          1.868741421875,
+          2.04944690546875,
+          1.9058029765625002
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 3.572729440629785
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "pruned_1e-5/sparse": {
-      "model": "pruned_1e-5/sparse",
-      "n": 2425,
-      "correct": 2308,
-      "errors": 117,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.9517525773195876,
         "top3_accuracy": 0.9942268041237113,
         "balanced_accuracy": 0.9506674000313208,
@@ -2594,92 +2572,22 @@
           267
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 15
-        },
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 9
-        },
-        {
-          "true": "T62",
-          "predicted": "ZSU234",
-          "count": 7
-        },
-        {
-          "true": "T72",
-          "predicted": "T62",
-          "count": 7
-        },
-        {
-          "true": "2S1",
-          "predicted": "ZIL131",
-          "count": 6
-        }
-      ],
-      "checkpoint_group": "pruned_1e-5",
-      "variant": "sparse",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 20,
-        "T": 4,
-        "penalty_lmbda": 1e-05,
-        "not_prune_neuron": false,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.0001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 2982628,
-        "buffer_elements": 767271,
-        "model_tensor_bytes": 12850060
-      },
-      "latency_bs1": {
-        "mean_ms": 1.4501005649435683,
-        "median_ms": 1.4452364994212985,
-        "p95_ms": 1.5177748631685972,
-        "std_ms": 0.10916484374275938,
-        "cuda_event_mean_ms": 1.4255463989451527,
-        "trial_mean_ms": [
-          1.4468138542724773,
-          1.4547449709425564,
-          1.4434566619456746,
-          1.4568503966074786,
-          1.4486369409496547
+      "parameters": 2982628,
+      "inference": {
+        "mean_ms": 1.530451203125,
+        "run_mean_ms": [
+          1.5031236109375,
+          1.4884753265625001,
+          1.4929465718750001,
+          1.63621526640625,
+          1.53149523984375
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 4.524236430847001
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "pruned_2e-5/baseline": {
-      "model": "pruned_2e-5/baseline",
-      "n": 2425,
-      "correct": 2173,
-      "errors": 252,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.8960824742268041,
         "top3_accuracy": 0.9909278350515464,
         "balanced_accuracy": 0.8928945941094012,
@@ -2922,92 +2830,22 @@
           257
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 23
-        },
-        {
-          "true": "D7",
-          "predicted": "ZSU234",
-          "count": 19
-        },
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 16
-        },
-        {
-          "true": "BTR70",
-          "predicted": "2S1",
-          "count": 16
-        },
-        {
-          "true": "T62",
-          "predicted": "ZSU234",
-          "count": 14
-        }
-      ],
-      "checkpoint_group": "pruned_2e-5",
-      "variant": "baseline",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 20,
-        "T": 4,
-        "penalty_lmbda": 2e-05,
-        "not_prune_neuron": false,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.0001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 12032548,
-        "buffer_elements": 9620,
-        "model_tensor_bytes": 48168752
-      },
-      "latency_bs1": {
-        "mean_ms": 6.529417019919492,
-        "median_ms": 6.482044002041221,
-        "p95_ms": 6.660498434212059,
-        "std_ms": 0.4683120769522054,
-        "cuda_event_mean_ms": 6.498567642644048,
-        "trial_mean_ms": [
-          6.540803759889968,
-          6.511462669550383,
-          6.490231677162228,
-          6.571693292244163,
-          6.532893700750719
+      "parameters": 12032548,
+      "inference": {
+        "mean_ms": 6.593124634375,
+        "run_mean_ms": [
+          6.466637925781251,
+          6.430048578906249,
+          6.411439958593749,
+          6.969758820312499,
+          6.687737888281251
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 1.0
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "pruned_2e-5/bn_lif": {
-      "model": "pruned_2e-5/bn_lif",
-      "n": 2425,
-      "correct": 2173,
-      "errors": 252,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.8960824742268041,
         "top3_accuracy": 0.9909278350515464,
         "balanced_accuracy": 0.8928945941094012,
@@ -3250,92 +3088,22 @@
           257
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 23
-        },
-        {
-          "true": "D7",
-          "predicted": "ZSU234",
-          "count": 19
-        },
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 16
-        },
-        {
-          "true": "BTR70",
-          "predicted": "2S1",
-          "count": 16
-        },
-        {
-          "true": "T62",
-          "predicted": "ZSU234",
-          "count": 14
-        }
-      ],
-      "checkpoint_group": "pruned_2e-5",
-      "variant": "bn_lif",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 20,
-        "T": 4,
-        "penalty_lmbda": 2e-05,
-        "not_prune_neuron": false,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.0001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 11211940,
-        "buffer_elements": 820608,
-        "model_tensor_bytes": 45697168
-      },
-      "latency_bs1": {
-        "mean_ms": 1.829840482241707,
-        "median_ms": 1.8101980676874518,
-        "p95_ms": 1.927859429270029,
-        "std_ms": 0.08309598129928272,
-        "cuda_event_mean_ms": 1.8037588994018734,
-        "trial_mean_ms": [
-          1.838142585256719,
-          1.8316910864086822,
-          1.8257222491229186,
-          1.8207824468845502,
-          1.8328640435356647
+      "parameters": 11211940,
+      "inference": {
+        "mean_ms": 1.920454655,
+        "run_mean_ms": [
+          1.8996870398437502,
+          1.8749012015625,
+          1.8716349898437499,
+          2.0492645546875,
+          1.9067854890625
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 3.5682984846419035
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     },
     "pruned_2e-5/sparse": {
-      "model": "pruned_2e-5/sparse",
-      "n": 2425,
-      "correct": 2170,
-      "errors": 255,
-      "classes": [
-        "2S1",
-        "BMP2",
-        "BRDM2",
-        "BTR60",
-        "BTR70",
-        "D7",
-        "T62",
-        "T72",
-        "ZIL131",
-        "ZSU234"
-      ],
-      "summary": {
+      "metrics": {
         "accuracy": 0.8948453608247423,
         "top3_accuracy": 0.9913402061855671,
         "balanced_accuracy": 0.8919436073137847,
@@ -3578,72 +3346,18 @@
           257
         ]
       ],
-      "largest_confusions": [
-        {
-          "true": "2S1",
-          "predicted": "T62",
-          "count": 25
-        },
-        {
-          "true": "D7",
-          "predicted": "ZSU234",
-          "count": 20
-        },
-        {
-          "true": "BMP2",
-          "predicted": "T72",
-          "count": 17
-        },
-        {
-          "true": "BTR70",
-          "predicted": "2S1",
-          "count": 15
-        },
-        {
-          "true": "T62",
-          "predicted": "ZSU234",
-          "count": 15
-        }
-      ],
-      "checkpoint_group": "pruned_2e-5",
-      "variant": "sparse",
-      "configuration": {
-        "seed": 0,
-        "model": "sew_resnet18_imagenet",
-        "epoch_search": 100,
-        "epoch_finetune": 20,
-        "T": 4,
-        "penalty_lmbda": 2e-05,
-        "not_prune_neuron": false,
-        "optimizer": "AdamW",
-        "search_lr": 0.001,
-        "finetune_lr": 0.0001,
-        "weight_decay": 0.0001,
-        "batch_size": 64,
-        "augment": true
-      },
-      "runtime_storage": {
-        "parameter_elements": 1793188,
-        "buffer_elements": 721011,
-        "model_tensor_bytes": 8027164
-      },
-      "latency_bs1": {
-        "mean_ms": 1.4520622755298973,
-        "median_ms": 1.4470050809904933,
-        "p95_ms": 1.5128197963349521,
-        "std_ms": 0.11987690125493596,
-        "cuda_event_mean_ms": 1.4275870000012219,
-        "trial_mean_ms": [
-          1.4481907955996576,
-          1.443840873434965,
-          1.4504938044410665,
-          1.4623254155594623,
-          1.4554604886143352
+      "parameters": 1793188,
+      "inference": {
+        "mean_ms": 1.52555640234375,
+        "run_mean_ms": [
+          1.50602766953125,
+          1.4868500296875,
+          1.49253154921875,
+          1.620014853125,
+          1.5223579101562499
         ],
-        "images_per_trial": 256,
-        "repeats": 5,
-        "warmup": 100,
-        "speedup_mean": 4.496650818599863
+        "timer": "CUDA-synchronized wall clock",
+        "iterations_per_run": 1280
       }
     }
   }
